@@ -57,7 +57,7 @@ public class FilterChainingWebHandlerTest {
         attribs.put("execOrder", execOrderList);
         ServerWebExchange exchange = mock(ServerWebExchange.class);
         when(exchange.getAttributes()).thenReturn(attribs);
-        FilterChainingWebHandler handler = new FilterChainingWebHandler(filters);
+        FilterAssemblingWebHandler handler = new FilterAssemblingWebHandler(filters);
 
         handler.handle(exchange).block();
         assertEquals(2, execOrderList.size());

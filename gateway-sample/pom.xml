@@ -12,6 +12,10 @@
     <artifactId>gateway-sample</artifactId>
     <description>Spring Boot 2.0 Zuul-like gateway service</description>
 
+    <properties>
+        <main-class>com.craigrueda.gateway.core.SampleApplication</main-class>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.craigrueda.gateway</groupId>

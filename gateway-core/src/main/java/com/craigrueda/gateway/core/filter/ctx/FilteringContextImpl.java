@@ -4,14 +4,19 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.ipc.netty.http.client.HttpClientResponse;
 
 import java.net.URI;
+
+import static java.lang.Boolean.TRUE;
 
 /**
  * Created by Craig Rueda
    */
 public class FilteringContextImpl implements FilteringContext {
+    private static long requestCnt = 0;
     private ServerWebExchange exchange;
+    private long requestNum = ++requestCnt;
 
     public FilteringContextImpl(ServerWebExchange exchange) {
         this.exchange = exchange;
@@ -44,17 +49,22 @@ public class FilteringContextImpl implements FilteringContext {
 
     @Override
     public void setOriginalUri(String uri) {
-
+        setAttribute(CTX_REQ_ORIG_URI, uri);
     }
 
     @Override
     public String getOriginalUri() {
-        return null;
+        return getAttribute(CTX_REQ_ORIG_URI);
     }
 
     @Override
-    public boolean shouldSendResponse() {
-        return true;
+    public boolean getShouldSendResponse() {
+        return TRUE.equals(getAttribute(CTX_SHOULD_SEND_RESP));
+    }
+
+    @Override
+    public void setShouldSendResponse(boolean shouldSend) {
+        setAttribute(CTX_SHOULD_SEND_RESP, shouldSend);
     }
 
     @Override
@@ -88,12 +98,27 @@ public class FilteringContextImpl implements FilteringContext {
     }
 
     @Override
-    public void setAlreadyRouted() {
-
+    public void setAlreadyRouted(boolean alreadyRouted) {
+        setAttribute(CTX_REQ_ROUTED, alreadyRouted);
     }
 
     @Override
     public boolean isAlreadyRouted() {
-        return false;
+        return TRUE.equals(getAttribute(CTX_REQ_ROUTED));
+    }
+
+    @Override
+    public long getRequestNum() {
+        return requestNum;
+    }
+
+    @Override
+    public void setError(Throwable throwable) {
+        setAttribute(CTX_REQ_ERROR, throwable);
+    }
+
+    @Override
+    public Throwable getError() {
+        return getAttribute(CTX_REQ_ERROR);
     }
 }

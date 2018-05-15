@@ -1,6 +1,7 @@
 package com.craigrueda.gateway.core.filter;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 
@@ -23,14 +24,17 @@ public class AppCtxGatewayFilterSource implements GatewayFilterSource {
     @EventListener
     public void handleContextRefresh(ContextRefreshedEvent event) {
         ApplicationContext ctx = event.getApplicationContext();
-        Map<String, GatewayFilter> beans = ctx.getBeansOfType(GatewayFilter.class);
 
-        if (!beans.isEmpty()) {
-            List<GatewayFilter> newFilters = new ArrayList<>(beans.values());
-            sort(newFilters);
-            filters = unmodifiableList(newFilters);
+        if (!ctx.getId().contains("management")) {
+            Map<String, GatewayFilter> beans = ctx.getBeansOfType(GatewayFilter.class);
 
-            callbacks.forEach(cb -> cb.accept(this));
+            if (!beans.isEmpty()) {
+                List<GatewayFilter> newFilters = new ArrayList<>(beans.values());
+                sort(newFilters);
+                filters = unmodifiableList(newFilters);
+
+                callbacks.forEach(cb -> cb.accept(this));
+            }
         }
     }
 

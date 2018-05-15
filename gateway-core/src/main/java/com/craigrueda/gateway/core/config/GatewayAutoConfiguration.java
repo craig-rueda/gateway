@@ -2,6 +2,8 @@ package com.craigrueda.gateway.core.config;
 
 import com.craigrueda.gateway.core.filter.AppCtxGatewayFilterSource;
 import com.craigrueda.gateway.core.filter.GatewayFilterSource;
+import com.craigrueda.gateway.core.filter.error.ErrorLoggingGatewayFilter;
+import com.craigrueda.gateway.core.filter.error.WebExceptionHandlingGatewayFilter;
 import com.craigrueda.gateway.core.filter.pre.RouteMappingPreFilter;
 import com.craigrueda.gateway.core.filter.response.WriteResponseFilter;
 import com.craigrueda.gateway.core.filter.route.WebClientRoutingFilter;
@@ -24,8 +26,10 @@ import org.springframework.web.reactive.DispatcherHandler;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.config.WebFluxConfigurationSupport;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.WebExceptionHandler;
 import reactor.ipc.netty.http.client.HttpClient;
 import reactor.ipc.netty.http.client.HttpClientOptions;
+import reactor.ipc.netty.resources.PoolResources;
 
 import java.util.function.Consumer;
 
@@ -48,11 +52,6 @@ public class GatewayAutoConfiguration implements InitializingBean {
         return new AppCtxGatewayFilterSource();
     }
 
-    @Bean
-    public GatewayHandlerMapping gatewayHandlerMapping(GatewayFilterSource filterSource) {
-        return new GatewayHandlerMapping(filterSource);
-    }
-
     @Override
     public void afterPropertiesSet() throws Exception {
         nettyReactiveWebServerFactory = null;
@@ -73,6 +72,17 @@ public class GatewayAutoConfiguration implements InitializingBean {
         return new WebClientRoutingFilter(webClient);
     }
 
+    @Bean
+    public ErrorLoggingGatewayFilter errorLoggingGatewayFilter() {
+        return new ErrorLoggingGatewayFilter();
+    }
+
+    @Bean
+    public WebExceptionHandlingGatewayFilter webExceptionHandlingGatewayFilter(
+            @Qualifier("errorWebExceptionHandler") WebExceptionHandler exceptionHandler) {
+        return new WebExceptionHandlingGatewayFilter(exceptionHandler);
+    }
+
     @Configuration
     public static class GatewayWebFluxConfigurationSupport extends WebFluxConfigurationSupport {
         @Autowired
@@ -87,6 +97,11 @@ public class GatewayAutoConfiguration implements InitializingBean {
     @Configuration
     @ConditionalOnClass(HttpClient.class)
     protected static class NettyConfiguration {
+       /* @Bean
+        public HttpClient httpClient(@Qualifier("nettyClientOptions") Consumer<? super HttpClientOptions.Builder> options) {
+            return HttpClient.create(options);
+        }*/
+
         @Bean
         public Consumer<? super HttpClientOptions.Builder> nettyClientOptions() {
             return opts -> {
@@ -96,6 +111,7 @@ public class GatewayAutoConfiguration implements InitializingBean {
                     //sslContextBuilder.sslProvider(OPENSSL);
                 });
 
+                opts.poolResources(PoolResources.elastic("Netty-Upstream-Pool"));
             };
         }
 
