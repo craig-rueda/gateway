@@ -1,4 +1,4 @@
-package com.craigrueda.gateway.core.handler;
+package com.craigrueda.gateway.core.handler.web;
 
 import com.craigrueda.gateway.core.filter.GatewayFilter;
 import com.craigrueda.gateway.core.filter.ctx.FilteringContext;
@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.craigrueda.gateway.core.filter.GatewayFilterType.ERROR;
+import static java.lang.System.nanoTime;
 import static java.util.stream.Collectors.toList;
 import static reactor.core.publisher.Mono.defer;
 import static reactor.core.publisher.Mono.empty;
@@ -48,8 +49,8 @@ public class FilterAssemblingWebHandler implements WebHandler {
 
         return ret.doFinally(signalType -> {
             if (log.isTraceEnabled()) {
-                log.trace("Finished request {}, concurrency level {} with signal {}",
-                    ctx.getRequestNum(), concurrencyLevel.decrementAndGet(), signalType);
+                log.trace("Finished request {}, concurrency level {} with signal {} in {}ms",
+                    ctx.getRequestNum(), concurrencyLevel.decrementAndGet(), signalType, (nanoTime() - ctx.startTimeNs()) / 1_000_000D);
             }
         }).onErrorResume((throwable -> {
             ctx.setError(throwable);
@@ -67,7 +68,7 @@ public class FilterAssemblingWebHandler implements WebHandler {
     protected Mono<Void> constructFilterAssembly(Mono<Void> baseAssembly, List<GatewayFilter> filters, FilteringContext ctx) {
         for (GatewayFilter f : filters) {
             baseAssembly = baseAssembly.then(defer(() ->
-                f.shouldFilter(ctx.getExchange()) ? f.doFilter(ctx) : empty()
+                f.shouldFilter(ctx) ? f.doFilter(ctx) : empty()
             ));
         }
 

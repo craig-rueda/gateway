@@ -1,5 +1,6 @@
 package com.craigrueda.gateway.core.filter;
 
+import com.craigrueda.gateway.core.filter.ctx.FilteringContext;
 import org.springframework.web.server.ServerWebExchange;
 
 /**
@@ -15,7 +16,7 @@ public abstract class AbstractGatewayFilter implements GatewayFilter {
     }
 
     @Override
-    public boolean shouldFilter(ServerWebExchange exchange) {
+    public boolean shouldFilter(FilteringContext ctx) {
         return true;
     }
 

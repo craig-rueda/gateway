@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
  * Created by Craig Rueda
    */
 public interface GatewayFilter extends Comparable<GatewayFilter> {
-    boolean shouldFilter(ServerWebExchange exchange);
+    boolean shouldFilter(FilteringContext ctx);
     int getOrder();
     GatewayFilterType getFilterType();
     Mono<Void> doFilter(FilteringContext ctx);

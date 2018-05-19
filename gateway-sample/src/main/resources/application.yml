@@ -10,3 +10,13 @@ management:
 logging:
   level:
     com.craigrueda.gateway.core.handler: INFO
+    #com.craigrueda.gateway.core.filter.route.WebClientRoutingFilter: TRACE
+gateway:
+  sensitiveClientResponseHeaders:
+    - server
+  routes:
+    - url: http://httpbin.org
+      path: /test/**
+      stripPrefix: true
+      sensitiveClientResponseHeaders:
+        - via

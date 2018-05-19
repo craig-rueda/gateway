@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.craigrueda.gateway.core.config.GatewayAutoConfiguration
+com.craigrueda.gateway.core.config.auto.GatewayAutoConfiguration

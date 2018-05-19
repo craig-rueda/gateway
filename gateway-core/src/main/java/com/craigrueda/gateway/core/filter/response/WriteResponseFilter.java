@@ -4,11 +4,9 @@ import com.craigrueda.gateway.core.filter.AbstractGatewayFilter;
 import com.craigrueda.gateway.core.filter.ctx.FilteringContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.web.reactive.function.client.ClientResponse;
 import reactor.core.publisher.Mono;
 
 import static com.craigrueda.gateway.core.filter.GatewayFilterType.RESPONSE;
-import static org.springframework.web.reactive.function.BodyExtractors.toDataBuffers;
 import static reactor.core.publisher.Mono.empty;
 
 /**
@@ -22,12 +20,13 @@ public class WriteResponseFilter extends AbstractGatewayFilter {
 
     @Override
     public Mono<Void> doFilter(FilteringContext ctx) {
-
-        // TODO: Deal with possibility of contents' source being non webclient based
-        final ClientResponse upstreamResponse = ctx.getUpstreamResponse();
-        if (upstreamResponse != null && ctx.getShouldSendResponse()) {
+        if (ctx.getShouldSendResponse()) {
             ServerHttpResponse response = ctx.getExchange().getResponse();
-            return response.writeWith(upstreamResponse.body(toDataBuffers()));
+
+            response.setStatusCode(ctx.getResponseStatus());
+            response.getHeaders().addAll(ctx.getClientResponseHeaders());
+
+            return response.writeWith(ctx.getUpstreamResponseBody());
         }
 
         return empty();

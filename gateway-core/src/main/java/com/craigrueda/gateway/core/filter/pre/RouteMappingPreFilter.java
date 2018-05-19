@@ -1,14 +1,16 @@
 package com.craigrueda.gateway.core.filter.pre;
 
+import com.craigrueda.gateway.core.config.GatewayConfiguration;
 import com.craigrueda.gateway.core.filter.AbstractGatewayFilter;
 import com.craigrueda.gateway.core.filter.ctx.FilteringContext;
+import com.craigrueda.gateway.core.filter.route.RouteNotFoundException;
+import com.craigrueda.gateway.core.routing.HeaderFilter;
+import com.craigrueda.gateway.core.routing.Route;
+import com.craigrueda.gateway.core.routing.RouteResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.server.ServerWebExchange;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import reactor.core.publisher.Mono;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import static com.craigrueda.gateway.core.filter.GatewayFilterType.PRE;
 import static reactor.core.publisher.Mono.empty;
@@ -18,30 +20,41 @@ import static reactor.core.publisher.Mono.empty;
 */
 @Slf4j
 public class RouteMappingPreFilter extends AbstractGatewayFilter {
-    public RouteMappingPreFilter() {
-        super(PRE, 5);
-    }
+    private RouteResolver routeResolver;
+    private final boolean preserveHostHeader;
+    private final HeaderFilter headerFilter;
 
-    @Override
-    public boolean shouldFilter(ServerWebExchange exchange) {
-        return true;
+    public RouteMappingPreFilter(RouteResolver routeResolver, GatewayConfiguration gatewayConfiguration,
+                                 HeaderFilter headerFilter) {
+        super(PRE, 5);
+        this.routeResolver = routeResolver;
+        this.preserveHostHeader = gatewayConfiguration.isPreserveHostHeader();
+        this.headerFilter = headerFilter;
     }
 
     @Override
     public Mono<Void> doFilter(FilteringContext ctx) {
-        try {
-            ctx.setUpstreamRequestUrl(new URI("http://craig.craigrueda.com:8000/sample2.json"));
-            HttpHeaders upstreamHeaders = new HttpHeaders();
-            upstreamHeaders.addAll(ctx.getExchange().getRequest().getHeaders());
-            //upstreamHeaders.set("Host", "httpbin.org");
+        ServerHttpRequest request = ctx.getExchange().getRequest();
+        String requestPath = request.getPath().value();
+        Route route = routeResolver.resolveRoute(requestPath, request.getMethodValue());
+        if (route == null) {
+            log.warn("Failed to match path {} to any routes", requestPath);
+            throw new RouteNotFoundException(requestPath);
+        }
+        else {
+            ctx.setUpstreamRequestRoute(route);
+            HttpHeaders upstreamHeaders = headerFilter.filterUpstreamRequestHeaders(request.getHeaders(), route);
+
+            if (!preserveHostHeader) {
+                upstreamHeaders.remove("host");
+            }
 
             ctx.setUpstreamRequestHeaders(upstreamHeaders);
+            ctx.setUpstreamQueryParams(request.getQueryParams());
             ctx.setShouldSendResponse(true);
+            ctx.setOriginalUri(request.getURI());
 
-            log.debug("Mapping upstream request {}", ctx.getRequestNum());
-        }
-        catch (URISyntaxException e) {
-            e.printStackTrace();
+            log.debug("Mapping upstream request {} num:{} to route {}", request.getPath(), ctx.getRequestNum(), route);
         }
 
         return empty();

@@ -4,6 +4,7 @@ import com.craigrueda.gateway.core.filter.AbstractGatewayFilter;
 import com.craigrueda.gateway.core.filter.GatewayFilter;
 import com.craigrueda.gateway.core.filter.GatewayFilterType;
 import com.craigrueda.gateway.core.filter.ctx.FilteringContext;
+import com.craigrueda.gateway.core.handler.web.FilterAssemblingWebHandler;
 import org.junit.Test;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -43,7 +44,7 @@ public class FilterChainingWebHandlerTest {
                 filter1 = new ExecOrderFilter(PRE, 1),
                 filter2 = new ExecOrderFilter(PRE, 1) {
                     @Override
-                    public boolean shouldFilter(ServerWebExchange exchange) {
+                    public boolean shouldFilter(FilteringContext ctx) {
                         return false;
                     }
                 };
