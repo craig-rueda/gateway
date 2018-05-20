@@ -2,7 +2,6 @@ package com.craigrueda.gateway.core.routing;
 
 import com.craigrueda.gateway.core.config.GatewayRoute;
 import com.google.common.base.CharMatcher;
-import org.springframework.core.NestedRuntimeException;
 import org.springframework.util.AntPathMatcher;
 
 import java.net.URI;
@@ -33,7 +32,7 @@ public class DefaultRouteResolver implements RouteResolver {
     }
 
     @Override
-    public Route resolveRoute(String path, String verb) {
+    public Route resolveRoute(String path) {
         // Make sure paths are root-based
         if (path == null) {
             path = "/";
@@ -45,7 +44,7 @@ public class DefaultRouteResolver implements RouteResolver {
         for (Map.Entry<String, GatewayRoute> ent : pathMap.entrySet()) {
             if (matcher.match(ent.getKey(), path)) {
                 try {
-                    return doBuildRoute(path, verb, ent.getValue());
+                    return doBuildRoute(path, ent.getValue());
                 } catch (URISyntaxException e) {
                     throw new MalformedRouteUrlException("Failed to parse URI " + path, e);
                 }
@@ -55,7 +54,7 @@ public class DefaultRouteResolver implements RouteResolver {
         return null;
     }
 
-    protected Route doBuildRoute(String matchedPath, String verb, GatewayRoute gatewayRoute) throws URISyntaxException {
+    protected Route doBuildRoute(String matchedPath, GatewayRoute gatewayRoute) throws URISyntaxException {
         if (TRUE.equals(gatewayRoute.getStripPrefix())) {
             matchedPath = matcher.extractPathWithinPattern(gatewayRoute.getPath(), matchedPath);
 
@@ -69,6 +68,6 @@ public class DefaultRouteResolver implements RouteResolver {
                         gatewayRoute.getUrl() + matchedPath
                 );
 
-        return new Route(new URI(upstreamUrl), gatewayRoute.getPath(), verb, gatewayRoute);
+        return new Route(new URI(upstreamUrl), gatewayRoute.getPath(), gatewayRoute);
     }
 }

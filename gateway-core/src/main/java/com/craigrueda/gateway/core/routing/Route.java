@@ -14,14 +14,12 @@ import java.net.URI;
 public class Route {
     private URI upstreamUri;
     private String matchedPath;
-    private String verb;
     private String hostHeader;
     private GatewayRoute matchedRouteRule;
 
-    public Route(URI upstreamUri, String matchedPath, String verb, GatewayRoute matchedRouteRule) {
+    public Route(URI upstreamUri, String matchedPath, GatewayRoute matchedRouteRule) {
         this.upstreamUri = upstreamUri;
         this.matchedPath = matchedPath;
-        this.verb = verb;
         this.matchedRouteRule = matchedRouteRule;
     }
 }

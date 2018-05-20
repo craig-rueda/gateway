@@ -36,7 +36,7 @@ public class RouteMappingPreFilter extends AbstractGatewayFilter {
     public Mono<Void> doFilter(FilteringContext ctx) {
         ServerHttpRequest request = ctx.getExchange().getRequest();
         String requestPath = request.getPath().value();
-        Route route = routeResolver.resolveRoute(requestPath, request.getMethodValue());
+        Route route = routeResolver.resolveRoute(requestPath);
         if (route == null) {
             log.warn("Failed to match path {} to any routes", requestPath);
             throw new RouteNotFoundException(requestPath);

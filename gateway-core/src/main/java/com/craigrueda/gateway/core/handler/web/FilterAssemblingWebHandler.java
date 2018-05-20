@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.craigrueda.gateway.core.filter.GatewayFilterType.ERROR;
+import static java.lang.String.format;
 import static java.lang.System.nanoTime;
 import static java.util.stream.Collectors.toList;
 import static reactor.core.publisher.Mono.defer;
@@ -79,8 +80,14 @@ public class FilterAssemblingWebHandler implements WebHandler {
         StringBuilder happyBuilder = new StringBuilder(),
                 errorBuilder = new StringBuilder();
 
-        happyPathFilters.forEach(f -> happyBuilder.append("\n  - ").append(f.getClass().getSimpleName()).append(" (").append(f.getOrder()).append(")"));
-        errorFilters.forEach(f -> errorBuilder.append("\n  - ").append(f.getClass().getSimpleName()).append(" (").append(f.getOrder()).append(")"));
+        happyPathFilters.forEach(f -> happyBuilder.append(
+                format("\n  - %s [%s:%d]", f.getClass().getSimpleName(), f.getFilterType(), f.getOrder())
+            )
+        );
+        errorFilters.forEach(f -> errorBuilder.append(
+                format("\n  - %s [%s:%d]", f.getClass().getSimpleName(), f.getFilterType(), f.getOrder())
+                )
+        );
 
         log.info("\nInitialized {} Filter Configuration:\n" +
                 "Filters:{}\n\n" +

@@ -18,10 +18,28 @@ import static java.util.Collections.unmodifiableSet;
 @ConfigurationProperties("gateway")
 @Data
 public class GatewayConfiguration {
+    /**
+     * Should we pass the host header read from the client upstream?
+     */
     private boolean preserveHostHeader = false;
+    /**
+     * Should we inject an `X-Forwarded-For` header?
+     */
+    private boolean addForwardForHeader = false;
+    /**
+     * What should the Forwarded-For header be named?
+     */
+    private String forwardedForHeaderName = "X-Forwarded-For";
+    /**
+     * Which headers should be stripped from the upstream response before returning to the client?
+     */
     private Set<String> sensitiveClientResponseHeaders = new HashSet<>();
+    /**
+     * Which headers should be stripped from the request before forwarding to the upstream?
+     */
     private Set<String> sensitiveUpstreamRequestHeaders = new HashSet<>();
     private List<GatewayRoute> routes = new ArrayList<>();
+    private GatewayUpstream upstream = new GatewayUpstream();
 
     public void setSensitiveClientResponseHeaders(Set<String> sensitiveClientResponseHeaders) {
         this.sensitiveClientResponseHeaders = unmodifiableSet(sensitiveClientResponseHeaders);

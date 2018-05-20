@@ -3,6 +3,7 @@ package com.craigrueda.gateway.core.config.auto;
 import com.craigrueda.gateway.core.config.GatewayConfiguration;
 import com.craigrueda.gateway.core.filter.error.WebExceptionHandlingGatewayFilter;
 import com.craigrueda.gateway.core.filter.post.UpstreamResponseHandlingPostFilter;
+import com.craigrueda.gateway.core.filter.pre.ForwardedForPreFilter;
 import com.craigrueda.gateway.core.filter.pre.RouteMappingPreFilter;
 import com.craigrueda.gateway.core.filter.response.WriteResponseFilter;
 import com.craigrueda.gateway.core.filter.route.WebClientRoutingFilter;
@@ -44,6 +45,11 @@ public class GatewayAutoConfiguration {
     @ConditionalOnMissingBean
     public HeaderFilter headerFilter(GatewayConfiguration gatewayConfiguration) {
         return new DefaultHeaderFilter(gatewayConfiguration);
+    }
+
+    @Bean
+    public ForwardedForPreFilter forwardedForPreFilter(GatewayConfiguration gatewayConfiguration) {
+        return new ForwardedForPreFilter(gatewayConfiguration);
     }
 
     @Bean

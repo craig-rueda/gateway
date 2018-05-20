@@ -12,11 +12,24 @@ logging:
     com.craigrueda.gateway.core.handler: INFO
     #com.craigrueda.gateway.core.filter.route.WebClientRoutingFilter: TRACE
 gateway:
+  addForwardForHeader: true
+  enabled: true
+  preserveHostHeader: false
   sensitiveClientResponseHeaders:
     - server
   routes:
-    - url: http://httpbin.org
+    - url: http://192.168.99.100
       path: /test/**
       stripPrefix: true
       sensitiveClientResponseHeaders:
         - via
+    - url: https://craig.craigrueda.com:4430
+      path: /local-https/**
+      stripPrefix: true
+    - url: http://craig.craigrueda.com:8000
+      path: /local-http/**
+      stripPrefix: true
+  upstream:
+    maxPerRouteConnections: -1
+    ssl:
+      useOpenSSL: true
