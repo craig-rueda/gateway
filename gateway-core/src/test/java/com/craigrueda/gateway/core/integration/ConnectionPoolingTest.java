@@ -1,9 +1,5 @@
 package com.craigrueda.gateway.core.integration;
 
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.pool.ChannelPool;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -11,11 +7,8 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.ipc.netty.resources.PoolResources;
 
-import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import static org.springframework.web.reactive.function.client.WebClient.builder;
 

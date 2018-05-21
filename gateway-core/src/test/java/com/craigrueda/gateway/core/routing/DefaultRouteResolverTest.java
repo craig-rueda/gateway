@@ -3,6 +3,7 @@ package com.craigrueda.gateway.core.routing;
 import com.craigrueda.gateway.core.config.GatewayRoute;
 import org.junit.Test;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -20,17 +21,17 @@ public class DefaultRouteResolverTest {
         ));
 
         Route r = resolver.resolveRoute(null);
-        assertEquals("http://test.com", r.getUpstreamUri());
+        assertEquals(new URI("http://test.com"), r.getUpstreamUri());
 
         r = resolver.resolveRoute("/");
-        assertEquals("http://test.com", r.getUpstreamUri());
+        assertEquals(new URI("http://test.com"), r.getUpstreamUri());
 
         r = resolver.resolveRoute("//////");
-        assertEquals("http://test.com", r.getUpstreamUri());
+        assertEquals(new URI("http://test.com"), r.getUpstreamUri());
 
         // We only clean up the end of uris
         r = resolver.resolveRoute("///test///");
-        assertEquals("http://test.com///test", r.getUpstreamUri());
+        assertEquals(new URI("http://test.com///test"), r.getUpstreamUri());
     }
 
     @Test
@@ -43,15 +44,15 @@ public class DefaultRouteResolverTest {
 
         // Due to the way AntPathMatcher works, strip prefix doesn't strip when a mid-path wildcard is encountered
         Route r = resolver.resolveRoute("/part/first");
-        assertEquals("http://test.com/part/first", r.getUpstreamUri());
+        assertEquals(new URI("http://test.com/part/first"), r.getUpstreamUri());
         assertEquals("/*/first", r.getMatchedPath());
 
         r = resolver.resolveRoute("/part/second");
-        assertEquals("http://test.com/part/second", r.getUpstreamUri());
+        assertEquals(new URI("http://test.com/part/second"), r.getUpstreamUri());
         assertEquals("/*/second", r.getMatchedPath());
 
         r = resolver.resolveRoute("/third/part/fourth");
-        assertEquals("http://test.com/part/fourth", r.getUpstreamUri());
+        assertEquals(new URI("http://test.com/part/fourth"), r.getUpstreamUri());
         assertEquals("/third/*/fourth", r.getMatchedPath());
     }
 
@@ -63,11 +64,11 @@ public class DefaultRouteResolverTest {
         ));
 
         Route r = resolver.resolveRoute("/first/part");
-        assertEquals("http://test.com/part", r.getUpstreamUri());
+        assertEquals(new URI("http://test.com/part"), r.getUpstreamUri());
         assertEquals("/first/**", r.getMatchedPath());
 
         r = resolver.resolveRoute("/second/part");
-        assertEquals("http://test.com/second/part", r.getUpstreamUri());
+        assertEquals(new URI("http://test.com/second/part"), r.getUpstreamUri());
         assertEquals("/second/**", r.getMatchedPath());
 
         r = resolver.resolveRoute("/");
@@ -83,14 +84,14 @@ public class DefaultRouteResolverTest {
 
         Route r = resolver.resolveRoute("/first/part");
         assertEquals("/first/**", r.getMatchedPath());
-        assertEquals("http://test.com/first/part", r.getUpstreamUri());
+        assertEquals(new URI("http://test.com/first/part"), r.getUpstreamUri());
 
         r = resolver.resolveRoute("/first/second/");
         assertEquals("/first/second/**", r.getMatchedPath());
-        assertEquals("http://test.com/first/second", r.getUpstreamUri());
+        assertEquals(new URI("http://test.com/first/second"), r.getUpstreamUri());
 
         r = resolver.resolveRoute("/first/second/more");
         assertEquals("/first/second/**", r.getMatchedPath());
-        assertEquals("http://test.com/first/second/more", r.getUpstreamUri());
+        assertEquals(new URI("http://test.com/first/second/more"), r.getUpstreamUri());
     }
 }
