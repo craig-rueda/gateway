@@ -1,6 +1,6 @@
-# Reactive Api Gateway
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-[![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/apache/maven.svg?label=License)][license]
+# Reactive Api Gateway
 
 A Spring Webflux-based API gateway loosely based on Netflix's Zuul
 
