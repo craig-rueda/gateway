@@ -1,5 +1,7 @@
 # Reactive Api Gateway
 
+[![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/apache/maven.svg?label=License)][license]
+
 A Spring Webflux-based API gateway loosely based on Netflix's Zuul
 
 ## Huh???
