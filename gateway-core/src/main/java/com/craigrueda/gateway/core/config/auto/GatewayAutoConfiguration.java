@@ -1,6 +1,8 @@
 package com.craigrueda.gateway.core.config.auto;
 
 import com.craigrueda.gateway.core.config.GatewayConfiguration;
+import com.craigrueda.gateway.core.filter.AppCtxGatewayFilterSource;
+import com.craigrueda.gateway.core.filter.GatewayFilterSource;
 import com.craigrueda.gateway.core.filter.ctx.FilteringContextFactory;
 import com.craigrueda.gateway.core.filter.error.WebExceptionHandlingErrorFilter;
 import com.craigrueda.gateway.core.filter.post.UpstreamResponseHandlingPostFilter;
@@ -34,7 +36,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 @EnableConfigurationProperties
 @AutoConfigureBefore(HttpHandlerAutoConfiguration.class)
 @ConditionalOnClass(DispatcherHandler.class)
-@Import({GatewayErrorHandlerConfiguration.class, GatewayWebClientConfigration.class, GatewayWebFluxConfigurationSupport.class})
+@Import({
+        GatewayConfiguration.class,
+        GatewayErrorHandlerConfiguration.class,
+        GatewayWebClientConfigration.class,
+        GatewayWebFluxConfigurationSupport.class
+})
 public class GatewayAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
@@ -52,6 +59,12 @@ public class GatewayAutoConfiguration {
     @ConditionalOnMissingBean
     public FilteringContextFactory filteringContextFactory() {
         return new FilteringContextFactory() {};
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public GatewayFilterSource gatewayFilterSource() {
+        return new AppCtxGatewayFilterSource();
     }
 
     @Bean

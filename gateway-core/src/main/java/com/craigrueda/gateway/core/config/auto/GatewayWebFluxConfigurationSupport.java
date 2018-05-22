@@ -25,11 +25,6 @@ public class GatewayWebFluxConfigurationSupport extends WebFluxConfigurationSupp
         this.filteringContextFactory = filteringContextFactory;
     }
 
-    @Bean
-    public GatewayFilterSource gatewayFilterSource() {
-        return new AppCtxGatewayFilterSource();
-    }
-
     @Override
     public HandlerMapping resourceHandlerMapping() {
         return new GatewayHandlerMapping(gatewayFilterSource, filteringContextFactory);

@@ -129,7 +129,7 @@ public class DefaultFilteringContext implements FilteringContext {
     }
 
     @Override
-    public long startTimeNs() {
+    public long getStartTimeNs() {
         return startTimeNs;
     }
 

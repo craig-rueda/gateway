@@ -53,7 +53,7 @@ public class FilterAssemblingWebHandler implements WebHandler {
         return ret.doFinally(signalType -> {
             if (log.isTraceEnabled()) {
                 log.trace("Finished request {}, concurrency level {} with signal {} in {}ms",
-                    ctx.getRequestNum(), concurrencyLevel.decrementAndGet(), signalType, (nanoTime() - ctx.startTimeNs()) / 1_000_000D);
+                    ctx.getRequestNum(), concurrencyLevel.decrementAndGet(), signalType, (nanoTime() - ctx.getStartTimeNs()) / 1_000_000D);
             }
         }).onErrorResume((throwable -> {
             ctx.setError(throwable);

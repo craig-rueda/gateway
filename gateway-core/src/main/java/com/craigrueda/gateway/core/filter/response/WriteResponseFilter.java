@@ -19,16 +19,17 @@ public class WriteResponseFilter extends AbstractGatewayFilter {
     }
 
     @Override
+    public boolean shouldFilter(FilteringContext ctx) {
+        return ctx.getShouldSendResponse();
+    }
+
+    @Override
     public Mono<Void> doFilter(FilteringContext ctx) {
-        if (ctx.getShouldSendResponse()) {
-            ServerHttpResponse response = ctx.getExchange().getResponse();
+        ServerHttpResponse response = ctx.getExchange().getResponse();
 
-            response.setStatusCode(ctx.getResponseStatus());
-            response.getHeaders().addAll(ctx.getClientResponseHeaders());
+        response.setStatusCode(ctx.getResponseStatus());
+        response.getHeaders().addAll(ctx.getClientResponseHeaders());
 
-            return response.writeWith(ctx.getUpstreamResponseBody());
-        }
-
-        return empty();
+        return response.writeWith(ctx.getUpstreamResponseBody());
     }
 }

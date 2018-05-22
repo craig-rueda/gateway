@@ -53,13 +53,13 @@ public interface FilteringContext {
     void setClientResponseHeaders(HttpHeaders headers);
 
     Route getUpstreamRequestRoute();
-    void setUpstreamRequestRoute(Route uri);
+    void setUpstreamRequestRoute(Route route);
 
     void setAlreadyRouted(boolean alreadyRouted);
     boolean isAlreadyRouted();
 
     long getRequestNum();
-    long startTimeNs();
+    long getStartTimeNs();
 
     HttpStatus getResponseStatus();
     void setResponseStatus(HttpStatus status);

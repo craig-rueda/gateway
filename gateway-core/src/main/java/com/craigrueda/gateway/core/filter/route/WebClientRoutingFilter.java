@@ -15,9 +15,9 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static com.craigrueda.gateway.core.filter.DefaultGatewayFilterOrder.*;
+import static com.craigrueda.gateway.core.filter.DefaultGatewayFilterOrder.WebClientRoutingFilter;
 import static java.net.URLEncoder.encode;
-import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
 import static org.springframework.http.HttpMethod.TRACE;
 import static org.springframework.util.StringUtils.hasText;
@@ -52,13 +52,14 @@ public class WebClientRoutingFilter extends AbstractGatewayFilter {
         log.trace("Forwarding upstream request [{}] -> {}", method, requestUri);
 
         WebClient.RequestHeadersSpec<?> requestSpec =
-                webClient.method(method)
-                .uri(requestUri)
-                .headers(httpHeaders -> httpHeaders.addAll(ctx.getUpstreamRequestHeaders()))
-                .body(
-                    hasBody(method, request.getHeaders()) ?
-                        fromDataBuffers(request.getBody()) : null
-                );
+                webClient
+                    .method(method)
+                    .uri(requestUri)
+                    .headers(httpHeaders -> httpHeaders.addAll(ctx.getUpstreamRequestHeaders()))
+                    .body(
+                        hasBody(method, request.getHeaders()) ?
+                            fromDataBuffers(request.getBody()) : null
+                    );
 
         return requestSpec.exchange()
             .flatMap(res -> {
@@ -67,9 +68,9 @@ public class WebClientRoutingFilter extends AbstractGatewayFilter {
             });
     }
 
-    private URI buildRequestUri(FilteringContext ctx) {
+    URI buildRequestUri(FilteringContext ctx) {
         MultiValueMap<String, String> queryParams =
-                of(ctx.getUpstreamQueryParams())
+                ofNullable(ctx.getUpstreamQueryParams())
                         .orElseThrow(() -> new IllegalArgumentException("Query params must be set"));
         Route upstreamRoute = ctx.getUpstreamRequestRoute();
         String queryString =
@@ -88,7 +89,7 @@ public class WebClientRoutingFilter extends AbstractGatewayFilter {
         }
     }
 
-    private boolean hasBody(HttpMethod method, HttpHeaders headers) {
+    boolean hasBody(HttpMethod method, HttpHeaders headers) {
         if (method == TRACE) {
             // TRACE explicitly forbids a body
             return false;
