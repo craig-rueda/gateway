@@ -1,18 +1,18 @@
 version: 2
 jobs:
   build:
-
     working_directory: ~/gateway
-
     docker:
-      - image: circleci/openjdk:8-jdk-browsers
-
+      - image: circleci/openjdk:8-jdk
     steps:
-
       - checkout
 
       - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
-          key: gateway-{{ checksum "pom.xml" }}
+          keys:
+            - gateway-{{ checksum "pom.xml" }}
+            # fallback to using the latest cache if no exact match is found
+            - gateway-
+
 
       - run: mvn dependency:go-offline # gets the project dependencies
 
