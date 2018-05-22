@@ -25,7 +25,7 @@ public class DefaultFilteringContext implements FilteringContext {
 
     public DefaultFilteringContext(ServerWebExchange exchange) {
         this.exchange = exchange;
-        setOriginalUri(exchange.getRequest().getURI());
+        setOriginalUri(exchange.getRequest() != null ? exchange.getRequest().getURI() : null);
     }
 
     @Override

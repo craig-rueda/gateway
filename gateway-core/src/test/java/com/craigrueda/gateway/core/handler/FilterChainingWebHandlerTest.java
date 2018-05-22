@@ -60,12 +60,7 @@ public class FilterChainingWebHandlerTest {
         attribs.put("execOrder", execOrderList);
         ServerWebExchange exchange = mock(ServerWebExchange.class);
         when(exchange.getAttributes()).thenReturn(attribs);
-        FilterAssemblingWebHandler handler = new FilterAssemblingWebHandler(filters, new FilteringContextFactory() {
-            @Override
-            public FilteringContext buildContext(ServerWebExchange exchange) {
-                return new DefaultFilteringContext(exchange);
-            }
-        });
+        FilterAssemblingWebHandler handler = new FilterAssemblingWebHandler(filters, new FilteringContextFactory() {});
 
         handler.handle(exchange).block();
         assertEquals(2, execOrderList.size());
