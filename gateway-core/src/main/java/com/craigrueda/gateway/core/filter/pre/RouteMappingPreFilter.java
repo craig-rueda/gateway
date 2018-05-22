@@ -12,7 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import reactor.core.publisher.Mono;
 
-import static com.craigrueda.gateway.core.filter.GatewayFilterType.PRE;
+import static com.craigrueda.gateway.core.filter.DefaultGatewayFilterOrder.*;
 import static reactor.core.publisher.Mono.empty;
 
 /**
@@ -26,7 +26,7 @@ public class RouteMappingPreFilter extends AbstractGatewayFilter {
 
     public RouteMappingPreFilter(RouteResolver routeResolver, GatewayConfiguration gatewayConfiguration,
                                  HeaderFilter headerFilter) {
-        super(PRE, 5);
+        super(RouteMappingPreFilter.getFilterType(), RouteMappingPreFilter.getOrder());
         this.routeResolver = routeResolver;
         this.preserveHostHeader = gatewayConfiguration.isPreserveHostHeader();
         this.headerFilter = headerFilter;
@@ -52,7 +52,6 @@ public class RouteMappingPreFilter extends AbstractGatewayFilter {
             ctx.setUpstreamRequestHeaders(upstreamHeaders);
             ctx.setUpstreamQueryParams(request.getQueryParams());
             ctx.setShouldSendResponse(true);
-            ctx.setOriginalUri(request.getURI());
 
             log.debug("Mapping upstream request {} num:{} to route {}", request.getPath(), ctx.getRequestNum(), route);
         }

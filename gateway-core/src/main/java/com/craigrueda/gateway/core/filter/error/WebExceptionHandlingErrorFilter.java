@@ -5,16 +5,16 @@ import com.craigrueda.gateway.core.filter.ctx.FilteringContext;
 import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
 
-import static com.craigrueda.gateway.core.filter.GatewayFilterType.ERROR;
+import static com.craigrueda.gateway.core.filter.DefaultGatewayFilterOrder.*;
 
 /**
  * Created by Craig Rueda
  */
-public class WebExceptionHandlingGatewayFilter extends AbstractGatewayFilter {
+public class WebExceptionHandlingErrorFilter extends AbstractGatewayFilter {
     private final WebExceptionHandler webExceptionHandler;
 
-    public WebExceptionHandlingGatewayFilter(WebExceptionHandler webExceptionHandler) {
-        super(ERROR, Integer.MAX_VALUE);
+    public WebExceptionHandlingErrorFilter(WebExceptionHandler webExceptionHandler) {
+        super(WebExceptionHandlingErrorFilter.getFilterType(), WebExceptionHandlingErrorFilter.getOrder());
         this.webExceptionHandler = webExceptionHandler;
     }
 

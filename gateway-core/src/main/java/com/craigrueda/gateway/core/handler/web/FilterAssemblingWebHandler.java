@@ -2,7 +2,7 @@ package com.craigrueda.gateway.core.handler.web;
 
 import com.craigrueda.gateway.core.filter.GatewayFilter;
 import com.craigrueda.gateway.core.filter.ctx.FilteringContext;
-import com.craigrueda.gateway.core.filter.ctx.FilteringContextImpl;
+import com.craigrueda.gateway.core.filter.ctx.FilteringContextFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebHandler;
@@ -26,17 +26,19 @@ import static reactor.core.publisher.Mono.empty;
 public class FilterAssemblingWebHandler implements WebHandler {
     private final List<GatewayFilter> happyPathFilters, errorFilters;
     private final AtomicInteger concurrencyLevel = new AtomicInteger();
+    private final FilteringContextFactory filteringContextFactory;
 
-    public FilterAssemblingWebHandler(List<GatewayFilter> filters) {
-        this.happyPathFilters = filters.stream().filter(f -> f.getFilterType() != ERROR).collect(toList());
-        this.errorFilters = filters.stream().filter(f -> f.getFilterType() == ERROR).collect(toList());
+    public FilterAssemblingWebHandler(List<GatewayFilter> filters, FilteringContextFactory filteringContextFactory) {
+        this.happyPathFilters = buildHappyPathFilters(filters);
+        this.errorFilters = buildErrorFilters(filters);
+        this.filteringContextFactory = filteringContextFactory;
 
         doLogConfig();
     }
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange) {
-        FilteringContext ctx = createFilteringContext(exchange);
+        FilteringContext ctx = filteringContextFactory.buildContext(exchange);
         Mono<Void> ret = defer(() -> {
             if (log.isTraceEnabled()) {
                 log.trace("Starting request {}, concurrency level {}",
@@ -62,10 +64,6 @@ public class FilterAssemblingWebHandler implements WebHandler {
           .map(obj -> null);
     }
 
-    protected FilteringContext createFilteringContext(ServerWebExchange exchange) {
-        return new FilteringContextImpl(exchange);
-    }
-
     protected Mono<Void> constructFilterAssembly(Mono<Void> baseAssembly, List<GatewayFilter> filters, FilteringContext ctx) {
         for (GatewayFilter f : filters) {
             baseAssembly = baseAssembly.then(defer(() ->
@@ -74,6 +72,14 @@ public class FilterAssemblingWebHandler implements WebHandler {
         }
 
         return baseAssembly;
+    }
+
+    protected List<GatewayFilter> buildHappyPathFilters(List<GatewayFilter> allFilters) {
+        return allFilters.stream().filter(f -> f.getFilterType() != ERROR).collect(toList());
+    }
+
+    protected List<GatewayFilter> buildErrorFilters(List<GatewayFilter> allFilters) {
+        return allFilters.stream().filter(f -> f.getFilterType() == ERROR).collect(toList());
     }
 
     protected void doLogConfig() {

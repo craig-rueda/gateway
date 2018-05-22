@@ -1,7 +1,8 @@
 package com.craigrueda.gateway.core.config.auto;
 
 import com.craigrueda.gateway.core.config.GatewayConfiguration;
-import com.craigrueda.gateway.core.filter.error.WebExceptionHandlingGatewayFilter;
+import com.craigrueda.gateway.core.filter.ctx.FilteringContextFactory;
+import com.craigrueda.gateway.core.filter.error.WebExceptionHandlingErrorFilter;
 import com.craigrueda.gateway.core.filter.post.UpstreamResponseHandlingPostFilter;
 import com.craigrueda.gateway.core.filter.pre.ForwardedForPreFilter;
 import com.craigrueda.gateway.core.filter.pre.RouteMappingPreFilter;
@@ -48,6 +49,12 @@ public class GatewayAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
+    public FilteringContextFactory filteringContextFactory() {
+        return new FilteringContextFactory() {};
+    }
+
+    @Bean
     public ForwardedForPreFilter forwardedForPreFilter(GatewayConfiguration gatewayConfiguration) {
         return new ForwardedForPreFilter(gatewayConfiguration);
     }
@@ -70,8 +77,8 @@ public class GatewayAutoConfiguration {
     }
 
     @Bean
-    public WebExceptionHandlingGatewayFilter webExceptionHandlingGatewayFilter(GatewayWebExceptionHandler exceptionHandler) {
-        return new WebExceptionHandlingGatewayFilter(exceptionHandler);
+    public WebExceptionHandlingErrorFilter webExceptionHandlingGatewayFilter(GatewayWebExceptionHandler exceptionHandler) {
+        return new WebExceptionHandlingErrorFilter(exceptionHandler);
     }
 
     @Bean

@@ -17,14 +17,15 @@ import static java.lang.System.nanoTime;
 /**
  * Created by Craig Rueda
    */
-public class FilteringContextImpl implements FilteringContext {
+public class DefaultFilteringContext implements FilteringContext {
     private static long requestCnt = 0;
     private ServerWebExchange exchange;
     private long requestNum = ++requestCnt;
     private long startTimeNs = nanoTime();
 
-    public FilteringContextImpl(ServerWebExchange exchange) {
+    public DefaultFilteringContext(ServerWebExchange exchange) {
         this.exchange = exchange;
+        setOriginalUri(exchange.getRequest().getURI());
     }
 
     @Override

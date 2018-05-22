@@ -1,4 +1,4 @@
-package com.craigrueda.gateway.core;
+package com.craigrueda.gateway.core.integration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Ignore;
@@ -10,10 +10,9 @@ import static java.text.NumberFormat.getIntegerInstance;
  * Created by Craig Rueda
  */
 @Slf4j
-@Ignore
 public class MemTest {
     private static final int ITERATIONS_INT = 1_000_000_000;
-    private static final double NANOSECONDS_TO_MILLISECONDS = 1.0D / 1000000.0D;
+    private static final double NANOSECONDS_TO_MILLISECONDS = 1.0D / 1_000_000.0D;
 
     private final FieldHolder fieldHolder = new FieldHolder();
     private final ThreadLocal<FieldHolder> holderThreadLocal = ThreadLocal.withInitial(() -> fieldHolder);

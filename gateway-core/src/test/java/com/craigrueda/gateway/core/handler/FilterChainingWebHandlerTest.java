@@ -3,7 +3,9 @@ package com.craigrueda.gateway.core.handler;
 import com.craigrueda.gateway.core.filter.AbstractGatewayFilter;
 import com.craigrueda.gateway.core.filter.GatewayFilter;
 import com.craigrueda.gateway.core.filter.GatewayFilterType;
+import com.craigrueda.gateway.core.filter.ctx.DefaultFilteringContext;
 import com.craigrueda.gateway.core.filter.ctx.FilteringContext;
+import com.craigrueda.gateway.core.filter.ctx.FilteringContextFactory;
 import com.craigrueda.gateway.core.handler.web.FilterAssemblingWebHandler;
 import org.junit.Test;
 import org.springframework.web.server.ServerWebExchange;
@@ -58,7 +60,12 @@ public class FilterChainingWebHandlerTest {
         attribs.put("execOrder", execOrderList);
         ServerWebExchange exchange = mock(ServerWebExchange.class);
         when(exchange.getAttributes()).thenReturn(attribs);
-        FilterAssemblingWebHandler handler = new FilterAssemblingWebHandler(filters);
+        FilterAssemblingWebHandler handler = new FilterAssemblingWebHandler(filters, new FilteringContextFactory() {
+            @Override
+            public FilteringContext buildContext(ServerWebExchange exchange) {
+                return new DefaultFilteringContext(exchange);
+            }
+        });
 
         handler.handle(exchange).block();
         assertEquals(2, execOrderList.size());

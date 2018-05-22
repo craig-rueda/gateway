@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import reactor.core.publisher.Mono;
 
-import static com.craigrueda.gateway.core.filter.GatewayFilterType.RESPONSE;
+import static com.craigrueda.gateway.core.filter.DefaultGatewayFilterOrder.*;
 import static reactor.core.publisher.Mono.empty;
 
 /**
@@ -15,7 +15,7 @@ import static reactor.core.publisher.Mono.empty;
 @Slf4j
 public class WriteResponseFilter extends AbstractGatewayFilter {
     public WriteResponseFilter() {
-        super(RESPONSE, 100_000);
+        super(WriteResponseFilter.getFilterType(), WriteResponseFilter.getOrder());
     }
 
     @Override

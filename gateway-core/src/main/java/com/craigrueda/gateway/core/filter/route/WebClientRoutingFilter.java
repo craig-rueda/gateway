@@ -14,9 +14,8 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 
-import static com.craigrueda.gateway.core.filter.GatewayFilterType.ROUTE;
+import static com.craigrueda.gateway.core.filter.DefaultGatewayFilterOrder.*;
 import static java.net.URLEncoder.encode;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.joining;
@@ -33,7 +32,7 @@ public class WebClientRoutingFilter extends AbstractGatewayFilter {
     private final WebClient webClient;
 
     public WebClientRoutingFilter(WebClient webClient) {
-        super(ROUTE, 100);
+        super(WebClientRoutingFilter.getFilterType(), WebClientRoutingFilter.getOrder());
         this.webClient = webClient;
     }
 
