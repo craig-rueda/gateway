@@ -11,10 +11,12 @@ import static java.lang.Integer.MAX_VALUE;
 public enum DefaultGatewayFilterOrder {
     RouteMappingPreFilter(PRE, 50),
     ForwardedForPreFilter(PRE, 60),
+    HopByHopPreFilter(PRE, 70),
 
     WebClientRoutingFilter(ROUTE, 50),
 
     UpstreamResponseHandlingPostFilter(POST, 50),
+    HopByHopPostFilter(POST, 60),
 
     WriteResponseFilter(RESPONSE, 50),
 

@@ -83,14 +83,6 @@ public class WebClientRoutingFilterTest extends BaseFilterTest {
         filter.buildRequestUri(context);
     }
 
-    @Test
-    public void testHasBody() {
-        assertTrue(filter.hasBody(GET, new HttpHeaders(){{add("content-length", "0");}}));
-        assertTrue(filter.hasBody(GET, new HttpHeaders(){{add("transfer-encoding", "0");}}));
-        assertFalse(filter.hasBody(GET, new HttpHeaders()));
-        assertFalse(filter.hasBody(TRACE, new HttpHeaders(){{add("content-length", "0");}}));
-    }
-
     /**
      * Note: tests like this suck - too fragile/tightly coupled to the actual implementation...
      * Perhaps a refactor is in order? WebClient behavior could be

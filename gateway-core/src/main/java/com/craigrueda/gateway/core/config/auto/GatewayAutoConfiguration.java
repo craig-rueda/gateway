@@ -5,8 +5,10 @@ import com.craigrueda.gateway.core.filter.AppCtxGatewayFilterSource;
 import com.craigrueda.gateway.core.filter.GatewayFilterSource;
 import com.craigrueda.gateway.core.filter.ctx.FilteringContextFactory;
 import com.craigrueda.gateway.core.filter.error.WebExceptionHandlingErrorFilter;
+import com.craigrueda.gateway.core.filter.post.HopByHopPostFilter;
 import com.craigrueda.gateway.core.filter.post.UpstreamResponseHandlingPostFilter;
 import com.craigrueda.gateway.core.filter.pre.ForwardedForPreFilter;
+import com.craigrueda.gateway.core.filter.pre.HopByHopPreFilter;
 import com.craigrueda.gateway.core.filter.pre.RouteMappingPreFilter;
 import com.craigrueda.gateway.core.filter.response.WriteResponseFilter;
 import com.craigrueda.gateway.core.filter.route.WebClientRoutingFilter;
@@ -67,9 +69,17 @@ public class GatewayAutoConfiguration {
         return new AppCtxGatewayFilterSource();
     }
 
+    /**
+     * PRE Filters...
+     */
     @Bean
     public ForwardedForPreFilter forwardedForPreFilter(GatewayConfiguration gatewayConfiguration) {
         return new ForwardedForPreFilter(gatewayConfiguration);
+    }
+
+    @Bean
+    public HopByHopPreFilter hopByHopPreFilter() {
+        return new HopByHopPreFilter();
     }
 
     @Bean
@@ -79,23 +89,40 @@ public class GatewayAutoConfiguration {
         return new RouteMappingPreFilter(routeResolver, gatewayConfiguration, headerFilter);
     }
 
-    @Bean
-    public WriteResponseFilter writeResponseFilter() {
-        return new WriteResponseFilter();
-    }
-
+    /**
+     * ROUTE Filters...
+     */
     @Bean
     public WebClientRoutingFilter webClientRoutingFilter(WebClient webClient) {
         return new WebClientRoutingFilter(webClient);
     }
 
-    @Bean
-    public WebExceptionHandlingErrorFilter webExceptionHandlingGatewayFilter(GatewayWebExceptionHandler exceptionHandler) {
-        return new WebExceptionHandlingErrorFilter(exceptionHandler);
-    }
-
+    /**
+     * POST Filters...
+     */
     @Bean
     public UpstreamResponseHandlingPostFilter headerFilteringPostFilter(HeaderFilter headerFilter) {
         return new UpstreamResponseHandlingPostFilter(headerFilter);
+    }
+
+    @Bean
+    public HopByHopPostFilter hopByHopPostFilter() {
+        return new HopByHopPostFilter();
+    }
+
+    /**
+     * RESPONSE Filters...
+     */
+    @Bean
+    public WriteResponseFilter writeResponseFilter() {
+        return new WriteResponseFilter();
+    }
+
+    /**
+     * ERROR Filters...
+     */
+    @Bean
+    public WebExceptionHandlingErrorFilter webExceptionHandlingGatewayFilter(GatewayWebExceptionHandler exceptionHandler) {
+        return new WebExceptionHandlingErrorFilter(exceptionHandler);
     }
 }

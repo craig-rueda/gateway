@@ -5,7 +5,6 @@ import com.craigrueda.gateway.core.filter.ctx.FilteringContext;
 import com.craigrueda.gateway.core.routing.MalformedRouteUrlException;
 import com.craigrueda.gateway.core.routing.Route;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.MultiValueMap;
@@ -19,7 +18,6 @@ import static com.craigrueda.gateway.core.filter.DefaultGatewayFilterOrder.WebCl
 import static java.net.URLEncoder.encode;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
-import static org.springframework.http.HttpMethod.TRACE;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.reactive.function.BodyInserters.fromDataBuffers;
 import static reactor.core.publisher.Mono.empty;
@@ -56,10 +54,7 @@ public class WebClientRoutingFilter extends AbstractGatewayFilter {
                     .method(method)
                     .uri(requestUri)
                     .headers(httpHeaders -> httpHeaders.addAll(ctx.getUpstreamRequestHeaders()))
-                    .body(
-                        hasBody(method, request.getHeaders()) ?
-                            fromDataBuffers(request.getBody()) : null
-                    );
+                    .body(fromDataBuffers(request.getBody()));
 
         return requestSpec.exchange()
             .flatMap(res -> {
@@ -86,17 +81,6 @@ public class WebClientRoutingFilter extends AbstractGatewayFilter {
         }
         catch (URISyntaxException e) {
             throw new MalformedRouteUrlException("Failed to parse URI " + upstreamUri, e);
-        }
-    }
-
-    boolean hasBody(HttpMethod method, HttpHeaders headers) {
-        if (method == TRACE) {
-            // TRACE explicitly forbids a body
-            return false;
-        }
-        else {
-            // The presence of either a content length, or a given encoding signals the existence of a body...
-            return headers.containsKey("Content-Length") || headers.containsKey("Transfer-Encoding");
         }
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import reactor.core.publisher.Mono;
 
-import static com.craigrueda.gateway.core.filter.DefaultGatewayFilterOrder.*;
+import static com.craigrueda.gateway.core.filter.DefaultGatewayFilterOrder.RouteMappingPreFilter;
 import static reactor.core.publisher.Mono.empty;
 
 /**
