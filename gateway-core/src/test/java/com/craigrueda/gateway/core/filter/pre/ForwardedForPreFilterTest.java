@@ -30,6 +30,9 @@ public class ForwardedForPreFilterTest extends BaseFilterTest {
         filter.doFilter(context);
 
         assertEquals(newArrayList("0.0.0.0"), upstreamReqHeaders.get("X-Forwarded-For"));
+        assertEquals(newArrayList("test.com"), upstreamReqHeaders.get("X-Forwarded-Host"));
+        assertEquals(newArrayList("http"), upstreamReqHeaders.get("X-Forwarded-Proto"));
+        assertEquals(newArrayList("80"), upstreamReqHeaders.get("X-Forwarded-Port"));
     }
 
     @Override
@@ -37,7 +40,7 @@ public class ForwardedForPreFilterTest extends BaseFilterTest {
         assertFalse(filter.shouldFilter(context));
 
         GatewayConfiguration gatewayConfiguration = new GatewayConfiguration();
-        gatewayConfiguration.setAddForwardForHeader(true);
+        gatewayConfiguration.setAddForwardedHeaders(true);
         filter = new ForwardedForPreFilter(gatewayConfiguration);
         assertTrue(filter.shouldFilter(context));
     }

@@ -4,6 +4,7 @@ import com.craigrueda.gateway.core.filter.ctx.DefaultFilteringContext;
 import com.craigrueda.gateway.core.filter.ctx.FilteringContext;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.server.ServerWebExchange;
@@ -34,6 +35,7 @@ public abstract class BaseFilterTest {
     public void beforeBase() {
         MockServerHttpRequest request =
                 get("http://test.com")
+                .headers(new HttpHeaders(){{add("Host", "test.com");}})
                 .remoteAddress(new InetSocketAddress(80))
                 .build();
         ServerWebExchange exchange = from(request);

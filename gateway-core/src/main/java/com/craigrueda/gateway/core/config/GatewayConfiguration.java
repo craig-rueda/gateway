@@ -23,13 +23,9 @@ public class GatewayConfiguration {
      */
     private boolean preserveHostHeader = false;
     /**
-     * Should we inject an `X-Forwarded-For` header?
+     * Should we inject `X-Forwarded-xxx` headers?
      */
-    private boolean addForwardForHeader = false;
-    /**
-     * What should the Forwarded-For header be named?
-     */
-    private String forwardedForHeaderName = "X-Forwarded-For";
+    private boolean addForwardedHeaders = false;
     /**
      * Which headers should be stripped from the upstream response before returning to the client?
      */
