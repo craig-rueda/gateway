@@ -12,7 +12,7 @@ logging:
     com.craigrueda.gateway.core.handler: INFO
     #com.craigrueda.gateway.core.filter.route.WebClientRoutingFilter: TRACE
 gateway:
-  addForwardForHeader: true
+  addForwardedHeaders: true
   enabled: true
   preserveHostHeader: false
   sensitiveClientResponseHeaders:
@@ -23,6 +23,8 @@ gateway:
       stripPrefix: true
       sensitiveClientResponseHeaders:
         - via
+    - url: http://192.168.99.100
+      path: /post/**
     - url: https://craig.craigrueda.com:4430
       path: /local-https/**
       stripPrefix: true

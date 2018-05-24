@@ -29,7 +29,7 @@ public class ForwardedForPreFilterTest extends BaseFilterTest {
 
         filter.doFilter(context);
 
-        assertEquals(newArrayList("0.0.0.0"), upstreamReqHeaders.get("X-Forwarded-For"));
+        assertEquals(newArrayList("0.0.0.0:80"), upstreamReqHeaders.get("X-Forwarded-For"));
         assertEquals(newArrayList("test.com"), upstreamReqHeaders.get("X-Forwarded-Host"));
         assertEquals(newArrayList("http"), upstreamReqHeaders.get("X-Forwarded-Proto"));
         assertEquals(newArrayList("80"), upstreamReqHeaders.get("X-Forwarded-Port"));

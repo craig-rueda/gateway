@@ -8,6 +8,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import reactor.core.publisher.Mono;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.List;
 
@@ -53,10 +55,18 @@ public class ForwardedForPreFilter extends AbstractGatewayFilter {
         /**
          * X-Forwarded-For
          */
-        upstreamHeaders.putIfAbsent(
-            X_FORWARDED_FOR_HEADER,
-            newArrayList(request.getRemoteAddress().getAddress().getHostAddress())
-        );
+        InetSocketAddress remoteAddress = request.getRemoteAddress();
+        if (remoteAddress != null) {
+            StringBuilder sb = new StringBuilder(remoteAddress.getAddress().getHostAddress());
+            if (remoteAddress.getPort() > 0) {
+                sb.append(":").append(remoteAddress.getPort());
+            }
+
+            upstreamHeaders.putIfAbsent(
+                X_FORWARDED_FOR_HEADER,
+                newArrayList(sb.toString())
+            );
+        }
 
         /**
          * X-Forwarded-Host
