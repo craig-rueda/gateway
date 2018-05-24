@@ -91,6 +91,13 @@ public class WebClientRoutingFilterTest extends BaseFilterTest {
         assertFalse(filter.hasBody(TRACE, new HttpHeaders(){{add("content-length", "0");}}));
     }
 
+    /**
+     * Note: tests like this suck - too fragile/tightly coupled to the actual implementation...
+     * Perhaps a refactor is in order? WebClient behavior could be
+     * extracted to an adapter, perhaps?
+     *
+     * @throws URISyntaxException
+     */
     @Test
     public void testDoFilter() throws URISyntaxException {
         Route route = new Route(new URI("http://test.com"), "/test", null);

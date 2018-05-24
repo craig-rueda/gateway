@@ -28,7 +28,7 @@ public class AppCtxGatewayFilterSource implements GatewayFilterSource {
         if (!ctx.getId().contains("management")) {
             Map<String, GatewayFilter> beans = ctx.getBeansOfType(GatewayFilter.class);
 
-            if (!beans.isEmpty()) {
+            if (beans != null && !beans.isEmpty()) {
                 List<GatewayFilter> newFilters = new ArrayList<>(beans.values());
                 sort(newFilters);
                 filters = unmodifiableList(newFilters);

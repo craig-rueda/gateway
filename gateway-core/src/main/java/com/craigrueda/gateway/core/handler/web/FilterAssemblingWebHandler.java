@@ -24,6 +24,7 @@ import static reactor.core.publisher.Mono.empty;
    */
 @Slf4j
 public class FilterAssemblingWebHandler implements WebHandler {
+    private static final String FILTER_LOG_FORMAT = "\n  - %s [%s:%d]";
     private final List<GatewayFilter> happyPathFilters, errorFilters;
     private final AtomicInteger concurrencyLevel = new AtomicInteger();
     private final FilteringContextFactory filteringContextFactory;
@@ -46,7 +47,9 @@ public class FilterAssemblingWebHandler implements WebHandler {
             }
 
             return empty();
-        });
+        }).publishOn(Schedulers.parallel())
+            .subscribeOn(Schedulers.parallel())
+            .map(obj -> null);
 
         ret = constructFilterAssembly(ret, happyPathFilters, ctx);
 
@@ -58,10 +61,7 @@ public class FilterAssemblingWebHandler implements WebHandler {
         }).onErrorResume((throwable -> {
             ctx.setError(throwable);
             return constructFilterAssembly(empty(), errorFilters, ctx);
-        }))
-          .publishOn(Schedulers.parallel())
-          .subscribeOn(Schedulers.parallel())
-          .map(obj -> null);
+        }));
     }
 
     protected Mono<Void> constructFilterAssembly(Mono<Void> baseAssembly, List<GatewayFilter> filters, FilteringContext ctx) {
@@ -87,12 +87,12 @@ public class FilterAssemblingWebHandler implements WebHandler {
                 errorBuilder = new StringBuilder();
 
         happyPathFilters.forEach(f -> happyBuilder.append(
-                format("\n  - %s [%s:%d]", f.getClass().getSimpleName(), f.getFilterType(), f.getOrder())
+                format(FILTER_LOG_FORMAT, f.getClass().getSimpleName(), f.getFilterType(), f.getOrder())
             )
         );
         errorFilters.forEach(f -> errorBuilder.append(
-                format("\n  - %s [%s:%d]", f.getClass().getSimpleName(), f.getFilterType(), f.getOrder())
-                )
+                format(FILTER_LOG_FORMAT, f.getClass().getSimpleName(), f.getFilterType(), f.getOrder())
+            )
         );
 
         log.info("\nInitialized {} Filter Configuration:\n" +
