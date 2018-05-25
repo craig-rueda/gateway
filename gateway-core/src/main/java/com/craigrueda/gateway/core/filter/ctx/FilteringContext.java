@@ -19,6 +19,7 @@ public interface FilteringContext {
     String
         CTX_HTTP_STATUS = "CTX_HTTP_STATUS",
         CTX_REQ_ERROR = "CTX_REQ_ERROR",
+        CTX_REQ_HAS_BODY = "CTX_REQ_HAS_BODY",
         CTX_REQ_ROUTED = "CTX_REQ_ROUTED",
         CTX_REQ_ORIG_URI = "CTX_REQ_ORIG_URI",
         CTX_SHOULD_SEND_RESP = "CTX_SHOULD_SEND_RESP",
@@ -42,6 +43,9 @@ public interface FilteringContext {
 
     boolean getShouldSendResponse();
     void setShouldSendResponse(boolean shouldSend);
+
+    boolean isRequestHasBody();
+    void setRequestHasBody(boolean hasBody);
 
     ClientResponse getUpstreamResponse();
     void setUpstreamResponse(ClientResponse response);

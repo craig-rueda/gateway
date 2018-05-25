@@ -15,12 +15,15 @@ import java.util.function.Supplier;
 import static com.craigrueda.gateway.core.filter.GatewayFilterType.PRE;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.TRACE;
 
 /**
  * Created by Craig Rueda
@@ -28,6 +31,7 @@ import static org.mockito.Mockito.when;
 public class RouteMappingPreFilterTest extends BaseFilterTest {
     private RouteResolver routeResolver;
     private HeaderFilter headerFilter;
+    private RouteMappingPreFilter filter;
 
     public RouteMappingPreFilterTest() {
         super(50, PRE);
@@ -68,12 +72,21 @@ public class RouteMappingPreFilterTest extends BaseFilterTest {
         assertEquals(newArrayList("test.com"), context.getUpstreamRequestHeaders().get("host"));
     }
 
+    @Test
+    public void testHasBody() {
+        assertTrue(filter.hasBody(GET, new HttpHeaders(){{add("content-length", "0");}}));
+        assertTrue(filter.hasBody(GET, new HttpHeaders(){{add("transfer-encoding", "0");}}));
+        assertFalse(filter.hasBody(GET, new HttpHeaders()));
+        assertFalse(filter.hasBody(TRACE, new HttpHeaders(){{add("content-length", "0");}}));
+    }
+
     @Override
     protected Supplier<GatewayFilter> doBuildFilter() {
         return () -> {
             routeResolver = mock(RouteResolver.class);
             headerFilter = mock(HeaderFilter.class);
-            return new RouteMappingPreFilter(routeResolver, new GatewayConfiguration(), headerFilter);
+            filter = new RouteMappingPreFilter(routeResolver, new GatewayConfiguration(), headerFilter);
+            return filter;
         };
     }
 }

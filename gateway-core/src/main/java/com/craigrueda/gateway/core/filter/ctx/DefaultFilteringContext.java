@@ -74,6 +74,16 @@ public class DefaultFilteringContext implements FilteringContext {
     }
 
     @Override
+    public boolean isRequestHasBody() {
+        return TRUE.equals(getAttribute(CTX_REQ_HAS_BODY));
+    }
+
+    @Override
+    public void setRequestHasBody(boolean hasBody) {
+        setAttribute(CTX_REQ_HAS_BODY, hasBody);
+    }
+
+    @Override
     public ClientResponse getUpstreamResponse() {
         return getAttribute(CTX_UPSTREAM_RESP);
     }

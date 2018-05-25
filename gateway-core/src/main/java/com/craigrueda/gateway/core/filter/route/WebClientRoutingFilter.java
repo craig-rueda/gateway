@@ -6,8 +6,10 @@ import com.craigrueda.gateway.core.routing.MalformedRouteUrlException;
 import com.craigrueda.gateway.core.routing.Route;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.reactive.ClientHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -49,12 +51,14 @@ public class WebClientRoutingFilter extends AbstractGatewayFilter {
 
         log.trace("Forwarding upstream request [{}] -> {}", method, requestUri);
 
+        BodyInserter<?, ? super ClientHttpRequest> bodyInserter =
+                ctx.isRequestHasBody() ? fromDataBuffers(request.getBody()) : null;
         WebClient.RequestHeadersSpec<?> requestSpec =
                 webClient
                     .method(method)
                     .uri(requestUri)
                     .headers(httpHeaders -> httpHeaders.addAll(ctx.getUpstreamRequestHeaders()))
-                    .body(fromDataBuffers(request.getBody()));
+                    .body(bodyInserter);
 
         return requestSpec.exchange()
             .flatMap(res -> {

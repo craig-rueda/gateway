@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebHandler;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -47,9 +46,7 @@ public class FilterAssemblingWebHandler implements WebHandler {
             }
 
             return empty();
-        }).publishOn(Schedulers.parallel())
-            .subscribeOn(Schedulers.parallel())
-            .map(obj -> null);
+        });
 
         ret = constructFilterAssembly(ret, happyPathFilters, ctx);
 
