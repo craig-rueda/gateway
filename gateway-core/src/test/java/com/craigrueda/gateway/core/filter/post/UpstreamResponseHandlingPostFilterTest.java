@@ -2,7 +2,7 @@ package com.craigrueda.gateway.core.filter.post;
 
 import com.craigrueda.gateway.core.filter.BaseFilterTest;
 import com.craigrueda.gateway.core.filter.GatewayFilter;
-import com.craigrueda.gateway.core.routing.HeaderFilter;
+import com.craigrueda.gateway.core.routing.filter.HeaderFilter;
 import org.junit.Test;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;

@@ -1,5 +1,6 @@
-package com.craigrueda.gateway.core.routing;
+package com.craigrueda.gateway.core.routing.filter;
 
+import com.craigrueda.gateway.core.routing.Route;
 import org.springframework.http.HttpHeaders;
 
 /**

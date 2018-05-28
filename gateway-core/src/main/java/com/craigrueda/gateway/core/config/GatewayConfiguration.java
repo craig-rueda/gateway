@@ -35,7 +35,8 @@ public class GatewayConfiguration {
      */
     private Set<String> sensitiveUpstreamRequestHeaders = new HashSet<>();
     private List<GatewayRoute> routes = new ArrayList<>();
-    private GatewayUpstream upstream = new GatewayUpstream();
+    private GatewayUpstream upstreamHttp = new GatewayUpstream();
+    private GatewayUpstream upstreamWs = new GatewayUpstream();
 
     public void setSensitiveClientResponseHeaders(Set<String> sensitiveClientResponseHeaders) {
         this.sensitiveClientResponseHeaders = unmodifiableSet(sensitiveClientResponseHeaders);

@@ -14,10 +14,10 @@ import com.craigrueda.gateway.core.filter.response.WriteResponseFilter;
 import com.craigrueda.gateway.core.filter.route.WebClientRoutingFilter;
 import com.craigrueda.gateway.core.handler.error.GatewayErrorHandlerConfiguration;
 import com.craigrueda.gateway.core.handler.error.GatewayWebExceptionHandler;
-import com.craigrueda.gateway.core.routing.DefaultHeaderFilter;
-import com.craigrueda.gateway.core.routing.DefaultRouteResolver;
-import com.craigrueda.gateway.core.routing.HeaderFilter;
-import com.craigrueda.gateway.core.routing.RouteResolver;
+import com.craigrueda.gateway.core.routing.filter.DefaultHeaderFilter;
+import com.craigrueda.gateway.core.routing.resolve.DefaultRouteResolver;
+import com.craigrueda.gateway.core.routing.filter.HeaderFilter;
+import com.craigrueda.gateway.core.routing.resolve.RouteResolver;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,7 +41,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Import({
         GatewayConfiguration.class,
         GatewayErrorHandlerConfiguration.class,
-        GatewayWebClientConfigration.class,
+        GatewayWebClientConfiguration.class,
         GatewayWebFluxConfigurationSupport.class
 })
 public class GatewayAutoConfiguration {

@@ -1,6 +1,8 @@
-package com.craigrueda.gateway.core.routing;
+package com.craigrueda.gateway.core.routing.resolve;
 
 import com.craigrueda.gateway.core.config.GatewayRoute;
+import com.craigrueda.gateway.core.routing.Route;
+import com.craigrueda.gateway.core.routing.resolve.DefaultRouteResolver;
 import org.junit.Test;
 
 import java.net.URI;

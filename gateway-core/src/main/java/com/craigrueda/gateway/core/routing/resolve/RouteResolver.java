@@ -1,4 +1,6 @@
-package com.craigrueda.gateway.core.routing;
+package com.craigrueda.gateway.core.routing.resolve;
+
+import com.craigrueda.gateway.core.routing.Route;
 
 /**
  * Created by Craig Rueda

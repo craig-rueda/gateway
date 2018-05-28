@@ -2,7 +2,7 @@ package com.craigrueda.gateway.core.filter.route;
 
 import com.craigrueda.gateway.core.filter.AbstractGatewayFilter;
 import com.craigrueda.gateway.core.filter.ctx.FilteringContext;
-import com.craigrueda.gateway.core.routing.MalformedRouteUrlException;
+import com.craigrueda.gateway.core.routing.resolve.MalformedRouteUrlException;
 import com.craigrueda.gateway.core.routing.Route;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;

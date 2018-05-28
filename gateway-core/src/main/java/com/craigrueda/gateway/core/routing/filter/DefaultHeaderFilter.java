@@ -1,12 +1,10 @@
-package com.craigrueda.gateway.core.routing;
+package com.craigrueda.gateway.core.routing.filter;
 
 import com.craigrueda.gateway.core.config.GatewayConfiguration;
-import com.google.common.collect.Sets;
+import com.craigrueda.gateway.core.routing.Route;
 import org.springframework.http.HttpHeaders;
 
-import java.util.Collections;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.collect.Sets.union;
 import static java.util.Collections.emptySet;

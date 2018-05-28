@@ -2,7 +2,7 @@ package com.craigrueda.gateway.core.filter.post;
 
 import com.craigrueda.gateway.core.filter.AbstractGatewayFilter;
 import com.craigrueda.gateway.core.filter.ctx.FilteringContext;
-import com.craigrueda.gateway.core.routing.HeaderFilter;
+import com.craigrueda.gateway.core.routing.filter.HeaderFilter;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import reactor.core.publisher.Mono;
 

@@ -1,4 +1,4 @@
-package com.craigrueda.gateway.core.routing;
+package com.craigrueda.gateway.core.routing.resolve;
 
 import org.springframework.core.NestedRuntimeException;
 

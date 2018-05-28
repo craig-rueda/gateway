@@ -13,6 +13,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient;
+import org.springframework.web.reactive.socket.client.WebSocketClient;
+import org.springframework.web.reactive.socket.server.WebSocketService;
+import org.springframework.web.reactive.socket.server.support.HandshakeWebSocketService;
 import reactor.ipc.netty.http.client.HttpClient;
 import reactor.ipc.netty.http.client.HttpClientOptions;
 import reactor.ipc.netty.resources.PoolResources;
@@ -35,11 +39,20 @@ import static reactor.ipc.netty.resources.PoolResources.fixed;
 @Configuration
 @ConditionalOnClass(HttpClient.class)
 @Slf4j
-public class GatewayWebClientConfigration {
+public class GatewayWebClientConfiguration {
     @Bean
     @ConditionalOnMissingBean
-    public Consumer<? super HttpClientOptions.Builder> nettyClientOptions(GatewayConfiguration gatewayConfiguration) {
-        final GatewayUpstream upstream = gatewayConfiguration.getUpstream();
+    public Consumer<? super HttpClientOptions.Builder> httpClientOptions(GatewayConfiguration gatewayConfiguration) {
+        return doBuildClientOptions(gatewayConfiguration.getUpstreamHttp());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public Consumer<? super HttpClientOptions.Builder> wsClientOptions(GatewayConfiguration gatewayConfiguration) {
+        return doBuildClientOptions(gatewayConfiguration.getUpstreamWs());
+    }
+
+    private Consumer<? super HttpClientOptions.Builder> doBuildClientOptions(final GatewayUpstream upstream) {
         final GatewayUpstream.SSL ssl = upstream.getSsl();
         final boolean openSSLAvailable = isAvailable();
 
@@ -53,6 +66,7 @@ public class GatewayWebClientConfigration {
                 if (ssl.isUseOpenSSL()) {
                     ensureAvailability();
                     selectedProvider = OPENSSL;
+                    opts.preferNative(true);
                 }
                 sslContextBuilder.sslProvider(selectedProvider);
                 log.info("Building client with SSL provider [{}] (OpenSSL available:{})",
@@ -92,9 +106,21 @@ public class GatewayWebClientConfigration {
 
     @Bean
     @ConditionalOnMissingBean
-    public WebClient webClient(@Qualifier("nettyClientOptions") Consumer<? super HttpClientOptions.Builder> options) {
+    public WebClient webClient(@Qualifier("httpClientOptions") Consumer<? super HttpClientOptions.Builder> options) {
         return builder()
                 .clientConnector(new ReactorClientHttpConnector(options))
                 .build();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public WebSocketClient webSocketClient(@Qualifier("wsClientOptions") Consumer<? super HttpClientOptions.Builder> options) {
+        return new ReactorNettyWebSocketClient(options);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public WebSocketService webSocketService() {
+        return new HandshakeWebSocketService();
     }
 }

@@ -1,6 +1,7 @@
-package com.craigrueda.gateway.core.routing;
+package com.craigrueda.gateway.core.routing.resolve;
 
 import com.craigrueda.gateway.core.config.GatewayRoute;
+import com.craigrueda.gateway.core.routing.Route;
 import com.google.common.base.CharMatcher;
 import org.springframework.util.AntPathMatcher;
 

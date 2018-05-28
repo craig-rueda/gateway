@@ -4,9 +4,9 @@ import com.craigrueda.gateway.core.config.GatewayConfiguration;
 import com.craigrueda.gateway.core.filter.BaseFilterTest;
 import com.craigrueda.gateway.core.filter.GatewayFilter;
 import com.craigrueda.gateway.core.filter.route.RouteNotFoundException;
-import com.craigrueda.gateway.core.routing.HeaderFilter;
+import com.craigrueda.gateway.core.routing.filter.HeaderFilter;
 import com.craigrueda.gateway.core.routing.Route;
-import com.craigrueda.gateway.core.routing.RouteResolver;
+import com.craigrueda.gateway.core.routing.resolve.RouteResolver;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 
