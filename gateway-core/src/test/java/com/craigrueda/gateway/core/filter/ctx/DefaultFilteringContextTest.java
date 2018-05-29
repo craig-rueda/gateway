@@ -39,9 +39,9 @@ public class DefaultFilteringContextTest {
         ctx.setAttribute("testKey", "testVal");
         assertEquals("testVal", ctx.getAttribute("testKey"));
 
-        assertEquals(new URI("http://test.com"), ctx.getOriginalUri());
-        ctx.setOriginalUri(new URI("http://test2.com"));
-        assertEquals(new URI("http://test2.com"), ctx.getOriginalUri());
+        assertEquals(new URI("http://test.com"), ctx.getRequestUri());
+        ctx.setRequestUri(new URI("http://test2.com"));
+        assertEquals(new URI("http://test2.com"), ctx.getRequestUri());
 
         assertFalse(ctx.getShouldSendResponse());
         ctx.setShouldSendResponse(true);

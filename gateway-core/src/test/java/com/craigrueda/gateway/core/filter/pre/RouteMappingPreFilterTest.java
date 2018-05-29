@@ -10,6 +10,8 @@ import com.craigrueda.gateway.core.routing.resolve.RouteResolver;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.function.Supplier;
 
 import static com.craigrueda.gateway.core.filter.GatewayFilterType.PRE;
@@ -78,6 +80,23 @@ public class RouteMappingPreFilterTest extends BaseFilterTest {
         assertTrue(filter.hasBody(GET, new HttpHeaders(){{add("transfer-encoding", "0");}}));
         assertFalse(filter.hasBody(GET, new HttpHeaders()));
         assertFalse(filter.hasBody(TRACE, new HttpHeaders(){{add("content-length", "0");}}));
+    }
+
+    @Test
+    public void testUpdateWebsocketScheme() throws URISyntaxException {
+        context.setUpstreamRequestHeaders(new HttpHeaders(){{add("Upgrade", "Websocket");}});
+
+        context.setRequestUri(new URI("http://test.com/test?test=testval"));
+        filter.updateWebsocketScheme(context);
+        assertEquals(new URI("ws://test.com/test?test=testval"), context.getRequestUri());
+
+        context.setRequestUri(new URI("https://test.com/test?test=testval"));
+        filter.updateWebsocketScheme(context);
+        assertEquals(new URI("wss://test.com/test?test=testval"), context.getRequestUri());
+
+        context.setRequestUri(new URI("wss://test.com/test?test=testval2"));
+        filter.updateWebsocketScheme(context);
+        assertEquals(new URI("wss://test.com/test?test=testval2"), context.getRequestUri());
     }
 
     @Override

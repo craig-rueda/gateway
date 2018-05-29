@@ -14,6 +14,7 @@ public enum DefaultGatewayFilterOrder {
     HopByHopPreFilter(PRE, 70),
 
     WebClientRoutingFilter(ROUTE, 50),
+    WebsocketRoutingFilter(ROUTE, 51),
 
     UpstreamResponseHandlingPostFilter(POST, 50),
     HopByHopPostFilter(POST, 60),

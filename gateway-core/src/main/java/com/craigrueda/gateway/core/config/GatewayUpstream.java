@@ -21,9 +21,9 @@ public class GatewayUpstream {
      */
     private String upstreamConnectionPoolName = "Upstream-Pool";
     /**
-     * The maximum number of connections that can be used by a single route.
+     * The maximum number of connections that can be used by a single route. (Unlimited by default)
      */
-    private int maxPerRouteConnections = 10;
+    private int maxPerRouteConnections = -1;
     /**
      * The socket timeout in ms.
      */

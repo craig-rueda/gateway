@@ -13,8 +13,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
+
 import static com.craigrueda.gateway.core.filter.DefaultGatewayFilterOrder.RouteMappingPreFilter;
 import static org.springframework.http.HttpMethod.TRACE;
+import static org.springframework.web.util.UriComponentsBuilder.fromUri;
 import static reactor.core.publisher.Mono.empty;
 
 /**
@@ -56,10 +59,26 @@ public class RouteMappingPreFilter extends AbstractGatewayFilter {
             ctx.setShouldSendResponse(true);
             ctx.setRequestHasBody(hasBody(request.getMethod(), request.getHeaders()));
 
+            // Deal with WebSockets
+            updateWebsocketScheme(ctx);
+
             log.debug("Mapping upstream request {} num:{} to route {}", request.getPath(), ctx.getRequestNum(), route);
         }
 
         return empty();
+    }
+
+    void updateWebsocketScheme(FilteringContext ctx) {
+        URI requestUri = ctx.getRequestUri();
+        String scheme = requestUri.getScheme();
+        String upgrade = ctx.getUpstreamRequestHeaders().getUpgrade();
+
+        if ("websocket".equalsIgnoreCase(upgrade) && scheme.startsWith("http")) {
+            String wsScheme = scheme.equals("http") ? "ws" : "wss";
+            requestUri = fromUri(requestUri).scheme(wsScheme).build().toUri();
+            ctx.setRequestUri(requestUri);
+            log.trace("Changed request URI to {}", requestUri);
+        }
     }
 
     boolean hasBody(HttpMethod method, HttpHeaders headers) {

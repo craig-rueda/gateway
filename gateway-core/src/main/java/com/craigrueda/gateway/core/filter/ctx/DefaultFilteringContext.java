@@ -25,7 +25,7 @@ public class DefaultFilteringContext implements FilteringContext {
 
     public DefaultFilteringContext(ServerWebExchange exchange) {
         this.exchange = exchange;
-        setOriginalUri(exchange.getRequest() != null ? exchange.getRequest().getURI() : null);
+        setRequestUri(exchange.getRequest() != null ? exchange.getRequest().getURI() : null);
     }
 
     @Override
@@ -54,12 +54,12 @@ public class DefaultFilteringContext implements FilteringContext {
     }
 
     @Override
-    public void setOriginalUri(URI uri) {
+    public void setRequestUri(URI uri) {
         setAttribute(CTX_REQ_ORIG_URI, uri);
     }
 
     @Override
-    public URI getOriginalUri() {
+    public URI getRequestUri() {
         return getAttribute(CTX_REQ_ORIG_URI);
     }
 

@@ -12,6 +12,7 @@ import com.craigrueda.gateway.core.filter.pre.HopByHopPreFilter;
 import com.craigrueda.gateway.core.filter.pre.RouteMappingPreFilter;
 import com.craigrueda.gateway.core.filter.response.WriteResponseFilter;
 import com.craigrueda.gateway.core.filter.route.WebClientRoutingFilter;
+import com.craigrueda.gateway.core.filter.route.WebsocketRoutingFilter;
 import com.craigrueda.gateway.core.handler.error.GatewayErrorHandlerConfiguration;
 import com.craigrueda.gateway.core.handler.error.GatewayWebExceptionHandler;
 import com.craigrueda.gateway.core.routing.filter.DefaultHeaderFilter;
@@ -29,6 +30,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.reactive.DispatcherHandler;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.socket.client.WebSocketClient;
+import org.springframework.web.reactive.socket.server.WebSocketService;
 
 /**
  * Created by Craig Rueda
@@ -95,6 +98,12 @@ public class GatewayAutoConfiguration {
     @Bean
     public WebClientRoutingFilter webClientRoutingFilter(WebClient webClient) {
         return new WebClientRoutingFilter(webClient);
+    }
+
+    @Bean
+    public WebsocketRoutingFilter websocketRoutingFilter(WebSocketClient webSocketClient,
+                                                         WebSocketService webSocketService) {
+        return new WebsocketRoutingFilter(webSocketClient, webSocketService);
     }
 
     /**

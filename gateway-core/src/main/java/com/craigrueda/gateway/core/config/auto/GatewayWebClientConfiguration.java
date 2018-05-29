@@ -41,18 +41,17 @@ import static reactor.ipc.netty.resources.PoolResources.fixed;
 @Slf4j
 public class GatewayWebClientConfiguration {
     @Bean
-    @ConditionalOnMissingBean
     public Consumer<? super HttpClientOptions.Builder> httpClientOptions(GatewayConfiguration gatewayConfiguration) {
-        return doBuildClientOptions(gatewayConfiguration.getUpstreamHttp());
+        return doBuildClientOptions(gatewayConfiguration.getUpstreamHttp(), "http");
     }
 
     @Bean
-    @ConditionalOnMissingBean
     public Consumer<? super HttpClientOptions.Builder> wsClientOptions(GatewayConfiguration gatewayConfiguration) {
-        return doBuildClientOptions(gatewayConfiguration.getUpstreamWs());
+        return doBuildClientOptions(gatewayConfiguration.getUpstreamWs(), "websocket");
     }
 
-    private Consumer<? super HttpClientOptions.Builder> doBuildClientOptions(final GatewayUpstream upstream) {
+    private Consumer<? super HttpClientOptions.Builder> doBuildClientOptions(
+            final GatewayUpstream upstream, final String clientType) {
         final GatewayUpstream.SSL ssl = upstream.getSsl();
         final boolean openSSLAvailable = isAvailable();
 
@@ -69,8 +68,8 @@ public class GatewayWebClientConfiguration {
                     opts.preferNative(true);
                 }
                 sslContextBuilder.sslProvider(selectedProvider);
-                log.info("Building client with SSL provider [{}] (OpenSSL available:{})",
-                        selectedProvider, openSSLAvailable);
+                log.info("Building {} client with SSL provider [{}] (OpenSSL available:{})",
+                        clientType, selectedProvider, openSSLAvailable);
                 sslContextBuilder.ciphers(ssl.getAcceptedCiphers());
                 sslContextBuilder.enableOcsp(ssl.isEnableOcsp());
                 sslContextBuilder.protocols(ssl.getProtocols());

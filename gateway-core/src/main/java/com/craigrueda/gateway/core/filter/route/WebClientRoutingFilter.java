@@ -28,35 +28,27 @@ import static reactor.core.publisher.Mono.empty;
  * Created by Craig Rueda
  */
 @Slf4j
-public class WebClientRoutingFilter extends AbstractGatewayFilter {
+public class WebClientRoutingFilter extends BaseRoutingFilter {
     private final WebClient webClient;
 
     public WebClientRoutingFilter(WebClient webClient) {
-        super(WebClientRoutingFilter.getFilterType(), WebClientRoutingFilter.getOrder());
+        super(WebClientRoutingFilter.getFilterType(), WebClientRoutingFilter.getOrder(), "http");
         this.webClient = webClient;
     }
 
     @Override
-    public boolean shouldFilter(FilteringContext ctx) {
-        return ctx.getShouldSendResponse() && !ctx.isAlreadyRouted();
-    }
-
-    @Override
-    public Mono<Void> doFilter(FilteringContext ctx) {
-        URI requestUri = buildRequestUri(ctx);
-        ctx.setAlreadyRouted(true);
-
+    public Mono<Void> doHandleRequest(URI upstreamUri, FilteringContext ctx) {
         ServerHttpRequest request = ctx.getExchange().getRequest();
         HttpMethod method = request.getMethod();
 
-        log.trace("Forwarding upstream request [{}] -> {}", method, requestUri);
+        log.trace("Forwarding upstream request [{}] -> {}", method, upstreamUri);
 
         BodyInserter<?, ? super ClientHttpRequest> bodyInserter =
                 ctx.isRequestHasBody() ? fromDataBuffers(request.getBody()) : null;
         WebClient.RequestHeadersSpec<?> requestSpec =
                 webClient
                     .method(method)
-                    .uri(requestUri)
+                    .uri(upstreamUri)
                     .headers(httpHeaders -> httpHeaders.addAll(ctx.getUpstreamRequestHeaders()))
                     .body(bodyInserter);
 
@@ -65,26 +57,5 @@ public class WebClientRoutingFilter extends AbstractGatewayFilter {
                 ctx.setUpstreamResponse(res);
                 return empty();
             });
-    }
-
-    URI buildRequestUri(FilteringContext ctx) {
-        MultiValueMap<String, String> queryParams =
-                ofNullable(ctx.getUpstreamQueryParams())
-                        .orElseThrow(() -> new IllegalArgumentException("Query params must be set"));
-        Route upstreamRoute = ctx.getUpstreamRequestRoute();
-        String queryString =
-            queryParams
-                .entrySet()
-                .stream()
-                .flatMap(entry -> entry.getValue().stream().map(val -> entry.getKey() + "=" + encode(val)))
-                .collect(joining("&"));
-        String upstreamUri = upstreamRoute.getUpstreamUri().toString() + (hasText(queryString) ? "?" + queryString : "");
-
-        try {
-            return new URI(upstreamUri);
-        }
-        catch (URISyntaxException e) {
-            throw new MalformedRouteUrlException("Failed to parse URI " + upstreamUri, e);
-        }
     }
 }

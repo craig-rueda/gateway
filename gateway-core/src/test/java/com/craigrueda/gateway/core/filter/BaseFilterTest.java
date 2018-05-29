@@ -2,6 +2,7 @@ package com.craigrueda.gateway.core.filter;
 
 import com.craigrueda.gateway.core.filter.ctx.DefaultFilteringContext;
 import com.craigrueda.gateway.core.filter.ctx.FilteringContext;
+import com.craigrueda.gateway.core.filter.route.BaseRoutingFilter;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
@@ -10,6 +11,7 @@ import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.server.ServerWebExchange;
 
 import java.net.InetSocketAddress;
+import java.net.URISyntaxException;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
@@ -20,9 +22,9 @@ import static org.springframework.mock.web.server.MockServerWebExchange.from;
 /**
  * Created by Craig Rueda
  */
-public abstract class BaseFilterTest {
+public abstract class BaseFilterTest<T extends AbstractGatewayFilter> {
     protected FilteringContext context;
-    protected GatewayFilter filter;
+    protected T filter;
     private final int expectedOrder;
     private final GatewayFilterType expectedType;
 
@@ -54,9 +56,9 @@ public abstract class BaseFilterTest {
     }
 
     @Test
-    public void testShouldFilter() {
+    public void testShouldFilter() throws Exception {
         assertTrue(filter.shouldFilter(context));
     }
 
-    protected abstract Supplier<GatewayFilter> doBuildFilter();
+    protected abstract Supplier<T> doBuildFilter();
 }

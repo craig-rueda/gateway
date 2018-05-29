@@ -29,58 +29,11 @@ import static org.springframework.http.HttpMethod.TRACE;
 /**
  * Created by Craig Rueda
  */
-public class WebClientRoutingFilterTest extends BaseFilterTest {
+public class WebClientRoutingFilterTest extends BaseRoutingFilterTest {
     private WebClient webClient;
-    private WebClientRoutingFilter filter;
 
     public WebClientRoutingFilterTest() {
-        super(50, ROUTE);
-    }
-
-    @Override
-    public void testShouldFilter() {
-        assertFalse(filter.shouldFilter(context));
-        context.setAlreadyRouted(true);
-        assertFalse(filter.shouldFilter(context));
-        context.setShouldSendResponse(true);
-        assertFalse(filter.shouldFilter(context));
-        context.setAlreadyRouted(false);
-        assertTrue(filter.shouldFilter(context));
-    }
-
-    @Test
-    public void testUriBuilding() throws URISyntaxException {
-        Route route = new Route(new URI("http://test.com"), "/test", null);
-        HttpHeaders queryParams = new HttpHeaders();
-        context.setUpstreamQueryParams(queryParams);
-        context.setUpstreamRequestRoute(route);
-
-        URI uri = filter.buildRequestUri(context);
-        assertEquals(new URI("http://test.com"), uri);
-
-        route.setUpstreamUri(new URI("http://test.com/test"));
-        queryParams.add("test", "testVal");
-        uri = filter.buildRequestUri(context);
-        assertEquals(new URI("http://test.com/test?test=testVal"), uri);
-
-        queryParams.clear();
-        queryParams.add("test", "testVal ");
-        uri = filter.buildRequestUri(context);
-        assertEquals(new URI("http://test.com/test?test=testVal+"), uri);
-
-        queryParams.clear();
-        queryParams.add("test", "testVal+ ");
-        uri = filter.buildRequestUri(context);
-        assertEquals(new URI("http://test.com/test?test=testVal%2B+"), uri);
-
-        queryParams.add("test2", "testVal2");
-        uri = filter.buildRequestUri(context);
-        assertEquals(new URI("http://test.com/test?test=testVal%2B+&test2=testVal2"), uri);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNullQueryParams() {
-        filter.buildRequestUri(context);
+        super(50, ROUTE, "http");
     }
 
     /**
@@ -128,10 +81,8 @@ public class WebClientRoutingFilterTest extends BaseFilterTest {
     }
 
     @Override
-    protected Supplier<GatewayFilter> doBuildFilter() {
-        return () -> {
-            filter = new WebClientRoutingFilter(webClient = mock(WebClient.class));
-            return filter;
-        };
+    protected Supplier<BaseRoutingFilter> doBuildFilter() {
+        return () ->
+            new WebClientRoutingFilter(webClient = mock(WebClient.class));
     }
 }

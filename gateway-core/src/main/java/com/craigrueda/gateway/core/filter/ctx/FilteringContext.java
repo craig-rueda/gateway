@@ -38,8 +38,8 @@ public interface FilteringContext {
     void setAttribute(String key, Object val);
     <T> T getAttribute(String key);
 
-    void setOriginalUri(URI uri);
-    URI getOriginalUri();
+    void setRequestUri(URI uri);
+    URI getRequestUri();
 
     boolean getShouldSendResponse();
     void setShouldSendResponse(boolean shouldSend);
