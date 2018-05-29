@@ -12,7 +12,7 @@ import com.craigrueda.gateway.core.filter.pre.HopByHopPreFilter;
 import com.craigrueda.gateway.core.filter.pre.RouteMappingPreFilter;
 import com.craigrueda.gateway.core.filter.response.WriteResponseFilter;
 import com.craigrueda.gateway.core.filter.route.WebClientRoutingFilter;
-import com.craigrueda.gateway.core.filter.route.WebsocketRoutingFilter;
+import com.craigrueda.gateway.core.filter.route.ws.WebsocketRoutingFilter;
 import com.craigrueda.gateway.core.handler.error.GatewayErrorHandlerConfiguration;
 import com.craigrueda.gateway.core.handler.error.GatewayWebExceptionHandler;
 import com.craigrueda.gateway.core.routing.filter.DefaultHeaderFilter;

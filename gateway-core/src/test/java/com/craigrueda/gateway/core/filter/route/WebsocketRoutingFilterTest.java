@@ -1,6 +1,6 @@
 package com.craigrueda.gateway.core.filter.route;
 
-import com.craigrueda.gateway.core.filter.GatewayFilter;
+import com.craigrueda.gateway.core.filter.route.ws.WebsocketRoutingFilter;
 import org.springframework.web.reactive.socket.client.WebSocketClient;
 import org.springframework.web.reactive.socket.server.WebSocketService;
 

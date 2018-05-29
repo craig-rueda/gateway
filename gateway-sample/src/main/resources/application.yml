@@ -31,6 +31,9 @@ gateway:
     - url: http://craig.craigrueda.com:8000
       path: /local-http/**
       stripPrefix: true
+    - url: ws://craig.craigrueda.com:8080
+      path: /ws/**
+      stripPrefix: true
   upstream:
     maxPerRouteConnections: -1
     ssl:
