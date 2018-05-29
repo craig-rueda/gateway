@@ -15,10 +15,9 @@ import static java.util.Collections.emptyList;
 /**
  * Created by Craig Rueda
  *
- * Note: Original source: https://github.com/spring-cloud/spring-cloud-gateway
+ * Note - Original source: https://github.com/spring-cloud/spring-cloud-gateway
  */
 public class ProxyWebSocketHandler implements WebSocketHandler {
-
     private final WebSocketClient client;
     private final URI url;
     private final HttpHeaders headers;
@@ -42,6 +41,9 @@ public class ProxyWebSocketHandler implements WebSocketHandler {
         return client.execute(url, this.headers, new WebSocketHandler() {
             @Override
             public Mono<Void> handle(WebSocketSession upstreamSession /* This session is connected to the backend service */) {
+                /**
+                 * Basically just hook each pipe to its compliment, passing one flux to the next's send()
+                 */
                 Mono<Void> proxySessionSend = upstreamSession
                         .send(downstreamSession.receive().doOnNext(WebSocketMessage::retain));
                 Mono<Void> serverSessionSend = downstreamSession
