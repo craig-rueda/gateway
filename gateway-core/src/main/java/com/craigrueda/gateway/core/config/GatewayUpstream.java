@@ -2,6 +2,7 @@ package com.craigrueda.gateway.core.config;
 
 import io.netty.handler.ssl.SslProvider;
 import lombok.Data;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
  */
 @Data
 public class GatewayUpstream {
+    @NestedConfigurationProperty
     private SSL ssl = new SSL();
     /**
      * When requesting a new connection from the underlying connection pool, how long should we wait in MS?

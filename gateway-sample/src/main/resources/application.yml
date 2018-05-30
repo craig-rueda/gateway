@@ -34,7 +34,11 @@ gateway:
     - url: ws://craig.craigrueda.com:8080
       path: /ws/**
       stripPrefix: true
-  upstream:
+  upstreamHttp:
+    maxPerRouteConnections: 100
+    ssl:
+      useOpenSSL: true
+  upstreamWs:
     maxPerRouteConnections: -1
     ssl:
       useOpenSSL: true

@@ -2,6 +2,7 @@ package com.craigrueda.gateway.core.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
@@ -34,8 +35,11 @@ public class GatewayConfiguration {
      * Which headers should be stripped from the request before forwarding to the upstream?
      */
     private Set<String> sensitiveUpstreamRequestHeaders = new HashSet<>();
+    @NestedConfigurationProperty
     private List<GatewayRoute> routes = new ArrayList<>();
+    @NestedConfigurationProperty
     private GatewayUpstream upstreamHttp = new GatewayUpstream();
+    @NestedConfigurationProperty
     private GatewayUpstream upstreamWs = new GatewayUpstream();
 
     public void setSensitiveClientResponseHeaders(Set<String> sensitiveClientResponseHeaders) {

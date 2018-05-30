@@ -22,7 +22,7 @@
             <artifactId>gateway-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        <!-- This is needed for OpenSSL integration -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-tcnative</artifactId>
@@ -67,7 +67,7 @@
             <extension>
                 <groupId>kr.motd.maven</groupId>
                 <artifactId>os-maven-plugin</artifactId>
-                <version>1.4.0.Final</version>
+                <version>1.6.0</version>
             </extension>
         </extensions>
         <plugins>
