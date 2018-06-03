@@ -38,8 +38,10 @@ gateway:
     maxPerRouteConnections: 100
     useEpoll: true
     ssl:
+      sslHostnameValidationEnabled: false
       useOpenSSL: true
   upstreamWs:
     maxPerRouteConnections: -1
     ssl:
+      sslHostnameValidationEnabled: false
       useOpenSSL: true
