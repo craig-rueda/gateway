@@ -34,7 +34,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport-native-epoll</artifactId>
-            <classifier>${os.detected.classifier}</classifier>
+            <classifier>${os.detected.name}-${os.detected.arch}</classifier>
         </dependency>
 
         <dependency>
