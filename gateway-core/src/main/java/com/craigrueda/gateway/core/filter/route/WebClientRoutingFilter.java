@@ -1,26 +1,17 @@
 package com.craigrueda.gateway.core.filter.route;
 
-import com.craigrueda.gateway.core.filter.AbstractGatewayFilter;
 import com.craigrueda.gateway.core.filter.ctx.FilteringContext;
-import com.craigrueda.gateway.core.routing.resolve.MalformedRouteUrlException;
-import com.craigrueda.gateway.core.routing.Route;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.reactive.ClientHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import static com.craigrueda.gateway.core.filter.DefaultGatewayFilterOrder.WebClientRoutingFilter;
-import static java.net.URLEncoder.encode;
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.joining;
-import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.reactive.function.BodyInserters.fromDataBuffers;
 import static reactor.core.publisher.Mono.empty;
 

@@ -2,6 +2,8 @@ package com.craigrueda.gateway.core.config.auto;
 
 import com.craigrueda.gateway.core.config.GatewayConfiguration;
 import com.craigrueda.gateway.core.config.GatewayUpstream;
+import io.netty.channel.epoll.Epoll;
+import io.netty.handler.ssl.OpenSsl;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -24,8 +26,6 @@ import reactor.ipc.netty.resources.PoolResources;
 import java.util.function.Consumer;
 
 import static io.netty.channel.ChannelOption.CONNECT_TIMEOUT_MILLIS;
-import static io.netty.handler.ssl.OpenSsl.ensureAvailability;
-import static io.netty.handler.ssl.OpenSsl.isAvailable;
 import static io.netty.handler.ssl.SslProvider.JDK;
 import static io.netty.handler.ssl.SslProvider.OPENSSL;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -53,9 +53,14 @@ public class GatewayWebClientConfiguration {
     private Consumer<? super HttpClientOptions.Builder> doBuildClientOptions(
             final GatewayUpstream upstream, final String clientType) {
         final GatewayUpstream.SSL ssl = upstream.getSsl();
-        final boolean openSSLAvailable = isAvailable();
+        final boolean openSSLAvailable = OpenSsl.isAvailable();
+        final boolean epollAvailable = Epoll.isAvailable();
 
         return opts -> {
+            if (upstream.isUseEpoll()) {
+                Epoll.ensureAvailability();
+            }
+
             opts.sslSupport(sslContextBuilder -> {
                 if (!ssl.isSslHostnameValidationEnabled()) {
                     sslContextBuilder.trustManager(InsecureTrustManagerFactory.INSTANCE);
@@ -63,13 +68,13 @@ public class GatewayWebClientConfiguration {
 
                 SslProvider selectedProvider = JDK;
                 if (ssl.isUseOpenSSL()) {
-                    ensureAvailability();
+                    OpenSsl.ensureAvailability();
                     selectedProvider = OPENSSL;
                     opts.preferNative(true);
                 }
                 sslContextBuilder.sslProvider(selectedProvider);
-                log.info("Building {} client with SSL provider [{}] (OpenSSL available:{})",
-                        clientType, selectedProvider, openSSLAvailable);
+                log.info("Building {} client with SSL provider [{}], Epoll [{}] (OpenSSL available:{}, Epoll available:{})",
+                        clientType, selectedProvider, upstream.isUseEpoll(), openSSLAvailable, epollAvailable);
                 sslContextBuilder.ciphers(ssl.getAcceptedCiphers());
                 sslContextBuilder.enableOcsp(ssl.isEnableOcsp());
                 sslContextBuilder.protocols(ssl.getProtocols());

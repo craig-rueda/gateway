@@ -96,4 +96,18 @@ public class DefaultRouteResolverTest {
         assertEquals("/first/second/**", r.getMatchedPath());
         assertEquals(new URI("http://test.com/first/second/more"), r.getUpstreamUri());
     }
+
+    @Test
+    public void testPathInUpstreamUrl() throws URISyntaxException {
+        DefaultRouteResolver resolver = new DefaultRouteResolver(newArrayList(
+                new GatewayRoute("http://test.com/part1", "/part2/**", false),
+                new GatewayRoute("http://test.com/part1", "/part4/**", true)
+        ));
+
+        Route r = resolver.resolveRoute("/part2/part3");
+        assertEquals(new URI("http://test.com/part1/part2/part3"), r.getUpstreamUri());
+
+        r = resolver.resolveRoute("/part4/part3");
+        assertEquals(new URI("http://test.com/part1/part3"), r.getUpstreamUri());
+    }
 }

@@ -22,6 +22,7 @@
             <artifactId>gateway-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <!-- This is needed for OpenSSL integration -->
         <dependency>
             <groupId>io.netty</groupId>
@@ -29,6 +30,13 @@
             <version>2.0.8.Final</version>
             <classifier>${os.detected.classifier}</classifier>
         </dependency>
+        <!-- This is needed for Native Epoll integration -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-epoll</artifactId>
+            <classifier>${os.detected.classifier}</classifier>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -63,6 +71,7 @@
     </dependencies>
 
     <build>
+        <finalName>gateway-sample</finalName>
         <extensions>
             <extension>
                 <groupId>kr.motd.maven</groupId>

@@ -36,6 +36,7 @@ gateway:
       stripPrefix: true
   upstreamHttp:
     maxPerRouteConnections: 100
+    useEpoll: true
     ssl:
       useOpenSSL: true
   upstreamWs:

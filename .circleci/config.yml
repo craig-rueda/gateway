@@ -25,3 +25,17 @@ jobs:
 
       - store_artifacts: # store the uberjar as an artifact
           path: gateway-core/target/gateway-core-0.0.1-SNAPSHOT.jar
+
+  deploy:
+    machine: true
+    working_directory: ~/gateway
+    steps:
+      - checkout
+
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+      # build the application image
+      - run: docker build -t craigrueda/gateway-sample:latest gateway-sample
+
+      # deploy the image
+      - run: docker push craigrueda/gateway-sample:latest

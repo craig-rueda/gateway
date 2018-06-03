@@ -34,6 +34,10 @@ public class GatewayUpstream {
      * The connection timeout in ms.
      */
     private int connectTimeoutMs = 2000;
+    /**
+     * Should we use Netty's Epoll native bindings for dealing with event loops?
+     */
+    private boolean useEpoll = false;
 
     @Data
     public static class SSL {
