@@ -34,6 +34,12 @@ gateway:
     - url: ws://craig.craigrueda.com:8080
       path: /ws/**
       stripPrefix: true
+    - url: http://nginx
+      path: /docker-http/**
+      stripPrefix: true
+    - url: https://nginx
+      path: /docker-https/**
+      stripPrefix: true
   upstreamHttp:
     maxPerRouteConnections: 100
     useEpoll: true
