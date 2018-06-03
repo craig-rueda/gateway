@@ -27,7 +27,11 @@ jobs:
           path: gateway-core/target/surefire-reports
 
       - store_artifacts: # store the uberjar as an artifact
-          path: gateway-core/target/gateway-core.jar
+          path: gateway-core/target/gateway-core-0.0.1-SNAPSHOT.jar
+
+      - persist_to_workspace:
+          root: .
+          paths: gateway-sample/target/gateway-sample.jar
 
   push:
     machine: true
