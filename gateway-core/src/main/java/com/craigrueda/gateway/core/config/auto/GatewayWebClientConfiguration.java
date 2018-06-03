@@ -67,14 +67,16 @@ public class GatewayWebClientConfiguration {
                 }
 
                 SslProvider selectedProvider = JDK;
+                String openSslVersion = "n/a";
                 if (ssl.isUseOpenSSL()) {
                     OpenSsl.ensureAvailability();
+                    openSslVersion = OpenSsl.versionString();
                     selectedProvider = OPENSSL;
                     opts.preferNative(true);
                 }
                 sslContextBuilder.sslProvider(selectedProvider);
-                log.info("Building {} client with SSL provider [{}], Epoll [{}] (OpenSSL available:{}, Epoll available:{})",
-                        clientType, selectedProvider, upstream.isUseEpoll(), openSSLAvailable, epollAvailable);
+                log.info("Building {} client with SSL provider [{}], Epoll [{}] (OpenSSL available:{} (v{}), Epoll available:{})",
+                        clientType, selectedProvider, upstream.isUseEpoll(), openSSLAvailable, openSslVersion, epollAvailable);
                 sslContextBuilder.ciphers(ssl.getAcceptedCiphers());
                 sslContextBuilder.enableOcsp(ssl.isEnableOcsp());
                 sslContextBuilder.protocols(ssl.getProtocols());
